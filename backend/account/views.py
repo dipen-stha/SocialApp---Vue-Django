@@ -7,6 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from .serializers import UserSerializer, UserSignUpSerializer, FriendRequestsSerializer
 from .models import FriendRequests
@@ -49,5 +50,38 @@ class FriendRequestsViewSet(ModelViewSet):
     serializer_class = FriendRequestsSerializer
     permission_classes = [IsAuthenticated]
     
-    def get_queryset(self, request):
-        return FriendRequests.objects.filter(id=request.query_params.get('user'))
+    def get_queryset(self):
+        return FriendRequests.objects.filter(created_for=self.request.user.id)
+    
+    def list(self, request, *args, **kwargs):
+        sent_queryset = self.get_queryset().filter(status='sent')
+        friends_queryset = User.objects.get(id=request.user.id).friends.all()
+
+        sent_serializer = FriendRequestsSerializer(sent_queryset, many=True, context={'request': request})
+        accepted_serialzier = UserSerializer(friends_queryset, many=True, context={'request': request})
+        return Response({
+            'sent': sent_serializer.data,
+            'accepted': accepted_serialzier.data
+        })
+
+    
+    @action(detail=False, methods=['get'])
+    def get_friends(self, request, *args, **kwargs):
+        friends = User.objects.get(id=request.query_params.get('id')).friends.all()
+        friends_serializer = UserSerializer(friends, many=True, context={'request': request})
+        return Response({
+            'friends': friends_serializer.data
+        })
+
+    
+    @action(detail=True, methods=['put'])
+    def update_status(self, request, *args, **kwargs):
+        status = request.query_params.get('status')
+        obj = self.get_object()
+        obj.status = status
+        user = request.user
+        obj.save()
+        user.friends.add(obj.created_by)
+        user.save()
+
+        return Response(FriendRequestsSerializer(obj).data)

@@ -17,6 +17,7 @@ import FeedItem from '@/components/FeedItem.vue';
         .then(response => {
             searchedUsers.value = response.data.user
             searchedPosts.value = response.data.posts
+            console.log(searchedUsers.value)
         })
     }
 
@@ -54,7 +55,7 @@ import FeedItem from '@/components/FeedItem.vue';
                             <p class="mt-4 text-xl font-semibold">{{ user.name }}</p>
 
                             <div class="mt-6 flex space-x-8 justify-around">
-                                <p class="text-xs text-gray-500">182 friends</p>
+                                <p class="text-xs text-gray-500">{{user.friends_count}} friends</p>
                                 <p class="text-xs text-gray-500">{{user.post_count}} posts</p>
                             </div>
                         </div>

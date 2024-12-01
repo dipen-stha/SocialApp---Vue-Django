@@ -26,15 +26,24 @@ class UserSignUpSerializer(ModelSerializer):
 
 
 class UserSerializer(ModelSerializer):
+    friends_count = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ['id','email', 'name', 'avatar', 'is_staff', 'is_active', 'is_superuser', 'last_login']
+        fields = ['id','email', 'name', 'avatar', 'is_staff', 'is_active', 'is_superuser', 'last_login', 'friends_count', 'friends']
+
+    def get_friends_count(self, instance):
+        return instance.friends.count()
 
 class UserSearchSerializer(ModelSerializer):
     post_count = serializers.IntegerField()
+    friends_count = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ['id','email', 'name', 'avatar', 'is_staff', 'is_active', 'is_superuser', 'last_login', 'post_count']
+        fields = ['id','email', 'name', 'avatar', 'is_staff', 'is_active', 'is_superuser', 'last_login', 'post_count', 'friends_count']
+
+    def get_friends_count(self, instance):
+        return instance.friends.count()
 
 
 class FriendRequestsSerializer(ModelSerializer):

@@ -6,7 +6,7 @@ from .views import SignupView, UserViewSet, FriendRequestsViewSet
 
 router = DefaultRouter()
 router.register(r'user', UserViewSet, basename="user")
-router.register(r'send-request', FriendRequestsViewSet, basename='friend_request'),
+router.register(r'friends', FriendRequestsViewSet, basename='friends'),
 
 urlpatterns =[
     path('account/login/', TokenObtainPairView.as_view(), name='token_obtain'),

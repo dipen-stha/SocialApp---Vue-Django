@@ -45,7 +45,7 @@ const getFeed = async() => {
 
 const sendRequest = async() => {
     await axios
-    .post(`api/send-request/?user=${user.value.id}`)
+    .post(`api/friends/?user=${user.value.id}`)
     .then(response => {
         console.log(response.data)
     })
@@ -64,11 +64,13 @@ watch(route, () => {
                 <p class="mt-4 text-xl font-semibold">{{ user.name }}</p>
 
                 <div class="mt-6 flex space-x-8 justify-around">
-                    <p class="text-xs text-gray-500">182 friends</p>
+                    <RouterLink :to="{name:'friends', params:{id: user.id}}">
+                        <p class="text-xs text-gray-500">{{user.friends_count}} friends</p>
+                    </RouterLink>
                     <p class="text-xs text-gray-500">{{ posts.length }} posts</p>
                 </div>
 
-                <div class="">
+                <div v-if="userStore.user.id !== route.params.id && !(user.friends.includes(userStore.user.id))" class="">
                     <button @click="sendRequest" class="bg-purple-500 hover:bg-purple-700 px-3 py-2 rounded-lg mt-4 w-full text-white">
                         <span class="flex space-x-4">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -76,6 +78,28 @@ watch(route, () => {
                             </svg>
                             <p>
                             Add Friend
+                            </p>
+                        </span>
+                    </button>
+                </div>
+                <div v-else-if="user.friends.includes(userStore.user.id)" class="flex space-x-4">
+                    <button class="bg-emerald-500 hover:bg-emerald-600 px-2 py-2 rounded-lg mt-4 text-white">
+                        <span class="flex space-x-2 text-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            </svg>
+                            <p>
+                            Friends
+                            </p>
+                        </span>
+                    </button>
+                    <button class="bg-red-500 hover:bg-red-600 px-2 py-2 rounded-lg mt-4 text-white">
+                        <span class="flex space-x-2 text-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                            </svg>
+                            <p>
+                            Unfriend
                             </p>
                         </span>
                     </button>
