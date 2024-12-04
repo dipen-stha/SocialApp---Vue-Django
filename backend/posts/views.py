@@ -4,9 +4,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from django.db.models import Q, Count
+from django.shortcuts import get_object_or_404
 
-from .models import Post, PostAttachment
-from .serializers import PostAttachmentSerializers, PostSerializer
+from .models import Post, PostAttachment, Like, Comment
+from .serializers import PostAttachmentSerializers, PostSerializer, LikeSerializer, CommentSerializer
 from account.models import User
 from account.serializers import UserSerializer, UserSearchSerializer
 
@@ -58,3 +59,31 @@ class PostViewSet(ModelViewSet):
             "user": user_serializer.data,
             "posts": posts_serializer.data
         })
+    
+    @action(detail=True, methods=['post'])
+    def add_likes(self, request, *args, **kwargs):
+        data = {
+            'post': get_object_or_404(Post, id=kwargs.get('pk'))
+        }
+        like_serializer = LikeSerializer(data=data, context={'request': request})
+        if like_serializer.is_valid():
+            like_instance = like_serializer.save()
+            return Response({
+                'likes': LikeSerializer(like_instance).data
+            })
+        return Response({
+            'error': 'There was an error.'
+        })
+    
+    @action(detail=True, methods=['post'])
+    def add_comments(self, request, *args, **kwargs):
+        request.data['post_id'] = kwargs.get('pk')
+
+        comment_serializer = CommentSerializer(data=request.data, context=
+        {'request': request})
+        if comment_serializer.is_valid():
+            comment_serializer.save()
+        return Response({
+            'comment': comment_serializer.data
+        })
+            

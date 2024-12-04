@@ -1,86 +1,91 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import Cookies from "js-cookie";
+import { reactive } from "vue";
 
-export const useUserStore = defineStore({
-    id: 'user',
+export const useUserStore = defineStore('user', () => {
 
-    state: () => ({
-        user: {
-            isAuthenticated: false,
-            id: null,
-            name: null,
-            email: null,
-            access: null,
-            refresh: null,
+    const user = reactive({
+        isAuthenticated: false,
+        id: null,
+        name: null,
+        email: null,
+        access: null,
+        refresh: null,
+    })
+
+    const initStore = () => {
+        if (Cookies.get('user.access')) {
+            user.access = Cookies.get('user.access')
+            user.refresh = Cookies.get('user.refresh')
+            user.id = Cookies.get('user.id')
+            user.email = Cookies.get('user.email')
+            user.name = Cookies.get('user.name')
+            user.isAuthenticated = true
+
+            refreshToken()
         }
-    }),
+    }
 
-    actions: {
-        initStore() {
-            if (localStorage.getItem('user.access')) {
-                this.user.access = localStorage.getItem('user.access')
-                this.user.refresh = localStorage.getItem('user.refresh')
-                this.user.id = localStorage.getItem('user.id')
-                this.user.email = localStorage.getItem('user.email')
-                this.user.name = localStorage.getItem('user.name')
-                this.user.isAuthenticated = true
+    const setToken = (data) => {
 
-                this.refreshToken()
-            }
-        },
+            user.access = data.access
+            user.refresh = data.refresh
+            user.isAuthenticated = true
 
-        setToken(data) {
+            Cookies.set('user.access', data.access)
+            Cookies.set('user.refresh', data.refresh)
+        }
 
-            this.user.access = data.access
-            this.user.refresh = data.refresh
-            this.user.isAuthenticated = true
+    const removeToken = () => {
 
-            localStorage.setItem('user.access', data.access)
-            localStorage.setItem('user.refresh', data.refresh)
-        },
+            user.refresh = null
+            user.access = null
+            user.isAuthenticated = null
+            user.id = null
+            user.name = null
+            user.email = null
 
-        removeToken() {
+            Cookies.set('user.access', '')
+            Cookies.set('user.refresh', '')
+            Cookies.set('user.id', '')
+            Cookies.set('user.name', '')
+            Cookies.set('user.email', '')
+        }
 
-            this.user.refresh = null
-            this.user.access = null
-            this.user.isAuthenticated = null
-            this.user.id = null
-            this.user.name = null
-            this.user.email = null
+    const setUserInfo = (user) => {
 
-            localStorage.setItem('user.access', '')
-            localStorage.setItem('user.refresh', '')
-            localStorage.setItem('user.id', '')
-            localStorage.setItem('user.name', '')
-            localStorage.setItem('user.email', '')
-        },
+            user.id = user.id
+            user.name = user.name
+            user.email = user.email
+            Cookies.set('user.id', user.id)
+            Cookies.set('user.name', user.name)
+            Cookies.set('user.email', user.email)
+        }
 
-        setUserInfo(user) {
-
-            this.user.id = user.id
-            this.user.name = user.name
-            this.user.email = user.email
-            localStorage.setItem('user.id', this.user.id)
-            localStorage.setItem('user.name', this.user.name)
-            localStorage.setItem('user.email', this.user.email)
-        },
-
-        refreshToken() {
+    const refreshToken = () => {
             axios.post('/api/refresh/', {
-                refresh: this.user.refresh
+                refresh: user.refresh
             })
             .then((response) => {
-                this.user.access = response.data.access
+                user.access = response.data.access
 
-                localStorage.setItem('user.access', response.data.access)
+                Cookies.set('user.access', response.data.access)
 
                 axios.defaults.headers.common["Authorization"] = "Bearer " + response.data.access
             })
             .catch((error) => {
                 console.log(error)
 
-                this.removeToken()
+                removeToken()
             })
+        };
+        return {
+            user,
+            initStore,
+            setToken,
+            removeToken,
+            setUserInfo,
+            refreshToken
         }
-    }
-})
+    })

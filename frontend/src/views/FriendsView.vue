@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import FeedItem from '@/components/FeedItem.vue';
 import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
 import Trends from '@/components/Trends.vue';
 import { useUserStore } from '@/stores/user';
