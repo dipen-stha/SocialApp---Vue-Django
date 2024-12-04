@@ -51,7 +51,9 @@ const getFeed = async() => {
                     </div>
                 </form>
             </div>
-            <FeedItem :posts="posts"/>
+            <div v-for="(post,index) in posts" :key="index">
+                <FeedItem :post="post"/>
+            </div>
         </div>
         <div class="main-right col-span-2">
             <PeopleYouMayKnow />

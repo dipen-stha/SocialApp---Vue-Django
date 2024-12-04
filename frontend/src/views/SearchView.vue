@@ -64,7 +64,9 @@ import FeedItem from '@/components/FeedItem.vue';
                 </div>
             </div>
             <div v-if="searchedPosts">
-                <FeedItem :posts="searchedPosts"/>
+                <div v-for="(post, index) in searchedPosts" :key="index">
+                    <FeedItem :post="post"/>
+                </div>
             </div>
 
         </div>
