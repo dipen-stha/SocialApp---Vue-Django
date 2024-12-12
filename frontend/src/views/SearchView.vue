@@ -50,7 +50,7 @@ import FeedItem from '@/components/FeedItem.vue';
                     <div v-for="(user, index) in searchedUsers" :key="index" class="col-span-1">
                         <div class="p-4 bg-gray-200 border m-2 border-gray-200 rounded-lg text-center">
                             <RouterLink :to="{name: 'profile', params:{ id:user.id }}">
-                                <img :src="user.avatar" class="rounded-full m-auto"/>
+                                <img :src="user.avatar" class="rounded-full m-auto w-10 h-10"/>
                             </RouterLink>
                             <p class="mt-4 text-xl font-semibold">{{ user.name }}</p>
 

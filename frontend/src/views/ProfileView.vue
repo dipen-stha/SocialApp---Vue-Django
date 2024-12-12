@@ -8,7 +8,11 @@ import { onMounted, ref, reactive, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 onMounted(() => {
-    getFeed()
+    if (route.params.id){
+        getFeed()
+        // fetchFriends()
+        fetchFriendRequests()
+    }
 })
 
 const posts = ref([])
@@ -21,7 +25,12 @@ const content = reactive({
     body: '',
     attachments: []
 })
+
 const user = ref(null)
+
+const friendRequestId = ref(null)
+
+const isFriend = ref(false)
 
 const handleSubmit = async() => {
     await axios
@@ -37,6 +46,12 @@ const getFeed = async() => {
     .then(response => {
         posts.value = response.data.posts
         user.value = response.data.user
+        console.log(user.value)
+        if(user.value.friends.find(item => item.user === route.params.id)) {
+            isFriend.value = true
+        } else{
+            isFriend.value = false
+        }
     })
     .catch(error => {
         console.log(error)
@@ -45,13 +60,38 @@ const getFeed = async() => {
 
 const sendRequest = async() => {
     await axios
-    .post(`api/friends/?user=${user.value.id}`)
+    .post(`/api/friend-requests/`, {
+        "created_for": `${route.params.id}`
+    })
     .then(response => {
         console.log(response.data)
     })
 }
 
-watch(route, () => {
+const handleRequest = async(status: string) => {
+    try {
+        let response = await axios.put(`/api/friend-requests/${friendRequestId.value}/`, {
+            "status": status
+        })
+        console.log(response.data)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+const fetchFriendRequests = async() => {
+    try{
+        const response = await axios.get('/api/friend-requests/')
+        if(response.data && response.data.length !== 0){
+            console.log(response.data)
+            friendRequestId.value = response.data.find(item => item.created_by.id === route.params.id).id
+        }
+    } catch (error){
+        console.log(error)
+    }
+}
+
+watch(() => route.params, () => {
     getFeed()
 })
 </script>
@@ -60,29 +100,17 @@ watch(route, () => {
     <div v-if="user" class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
         <div class="main-left col-span-1">
             <div class="p-4 bg-white border border-gray-200 rounded-lg text-center">
-                <img :src="user.avatar" class="rounded-full m-auto"/>
+                <img :src="user.avatar" class="rounded-full m-auto w-15 h-15"/>
                 <p class="mt-4 text-xl font-semibold">{{ user.name }}</p>
-
+                <p>{{ user.email }}</p>
                 <div class="mt-6 flex space-x-8 justify-around">
                     <RouterLink :to="{name:'friends', params:{id: user.id}}">
                         <p class="text-xs text-gray-500">{{user.friends_count}} friends</p>
                     </RouterLink>
                     <p class="text-xs text-gray-500">{{ posts.length }} posts</p>
                 </div>
-
-                <div v-if="userStore.user.id !== route.params.id && !(user.friends.includes(userStore.user.id))" class="">
-                    <button @click="sendRequest" class="bg-purple-500 hover:bg-purple-700 px-3 py-2 rounded-lg mt-4 w-full text-white">
-                        <span class="flex space-x-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
-                            </svg>
-                            <p>
-                            Add Friend
-                            </p>
-                        </span>
-                    </button>
-                </div>
-                <div v-else-if="user.friends.includes(userStore.user.id)" class="flex space-x-4">
+                <div v-if="userStore.user?.id !== route.params.id">
+                <div v-if="isFriend" class="flex space-x-4">
                     <button class="bg-emerald-500 hover:bg-emerald-600 px-2 py-2 rounded-lg mt-4 text-white">
                         <span class="flex space-x-2 text-xs">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
@@ -103,6 +131,43 @@ watch(route, () => {
                             </p>
                         </span>
                     </button>
+                </div>
+
+                <div v-else-if="!isFriend" class="">
+                    <button @click="sendRequest" class="bg-purple-500 hover:bg-purple-700 px-3 py-2 rounded-lg mt-4 w-full text-white">
+                        <span class="flex space-x-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                            </svg>
+                            <p>
+                            Add Friend
+                            </p>
+                        </span>
+                    </button>
+                </div>
+                <div v-else-if="!isFriend" class="flex space-x-2">
+                    <button class="bg-emerald-500 hover:bg-emerald-600 px-2 py-2 rounded-lg mt-4 text-white" @click="handleRequest('accepted')">
+                        <span class="flex space-x-2 text-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            </svg>
+                            <p>
+                            Accept
+                            </p>
+                        </span>
+                    </button>
+                    <button class="bg-red-500 hover:bg-red-600 px-2 py-2 rounded-lg mt-4 text-white" @click="handleRequest('rejected')">
+                        <span class="flex space-x-2 text-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                            </svg>
+                            <p>
+                            Reject
+                            </p>
+                        </span>
+                    </button>
+                </div>
+                    
                 </div>
             </div>
         </div>

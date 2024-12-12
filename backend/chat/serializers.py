@@ -1,0 +1,52 @@
+from rest_framework import serializers
+
+from account.serializers import UserSerializer
+from account.models import User
+from .models import Conversation, ConversationMessage
+
+
+class ConversationSerializer(serializers.ModelSerializer):
+    users = UserSerializer(many=True, read_only=True)
+    formatted_modified_at = serializers.CharField()
+
+    class Meta:
+        model = Conversation
+        fields = ['id', 'users', 'formatted_modified_at']
+
+
+class ConversationMessageSerializer(serializers.ModelSerializer):
+    created_by = UserSerializer(read_only=True)
+    sent_to = UserSerializer(read_only=True)
+    conversation = ConversationSerializer(read_only=True)
+    formatted_created_at = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = ConversationMessage
+        fields = ['id', 'created_by', 'sent_to', 'created_at', 'message', 'conversation', 'formatted_created_at']
+
+    def get_fields(self):
+        fields = super().get_fields()
+        if self.context['request'] and self.context['request'].method.lower() == 'post':
+            fields['conversation'] = serializers.PrimaryKeyRelatedField(queryset=Conversation.objects.all(), write_only=True)
+
+            fields['sent_to'] = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
+        return fields
+    
+    def create(self, validated_data):
+        # Automatically set the created_by field to the current user
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            validated_data['created_by'] = request.user
+        else:
+            raise serializers.ValidationError("User must be authenticated to create a message.")
+
+        return super().create(validated_data)
+
+
+class ConversationDetailSerializer(serializers.ModelSerializer):
+    messages = ConversationSerializer(many=True, read_only=True)
+    formatted_modified_at = serializers.CharField()
+
+    class Meta:
+        model = Conversation
+        fields = ['id', 'users', 'messages', 'formatted_modified_at']

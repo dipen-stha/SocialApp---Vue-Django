@@ -16,6 +16,7 @@ class PostSerializer(serializers.ModelSerializer):
     created_by = UserSerializer(read_only=True)
     likes_count = serializers.IntegerField()
     comments_count = serializers.IntegerField()
+    created_at_formatted = serializers.CharField()
 
     class Meta:
         model = Post
@@ -74,6 +75,7 @@ class LikeSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     created_by = UserSerializer(read_only=True)
     post = serializers.PrimaryKeyRelatedField(read_only=True)
+    created_at_formatted = serializers.CharField()
 
     class Meta:
         model = Comment

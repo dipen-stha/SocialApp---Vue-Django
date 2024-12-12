@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.timesince import timesince
 
 from account.models import User
+from .utils import format_time
 
 # Create your models here.
 
@@ -29,9 +30,9 @@ class Post(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+    @property
     def created_at_formatted(self):
-        time = timesince(self.created_at)
-        return time.split(',')[0]
+        return format_time(self.created_at)
     
     @property
     def likes_count(self):
@@ -59,6 +60,6 @@ class Comment(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+    @property
     def created_at_formatted(self):
-        time = timesince(self.created_at)
-        return time.split(',')[0]
+        return format_time(self.created_at)

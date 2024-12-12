@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
-from django.db.models import Count
+from django.db.models import Count, Prefetch
+from django.db import transaction
 
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.viewsets import ModelViewSet
@@ -9,8 +10,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from .serializers import UserSerializer, UserSignUpSerializer, FriendRequestsSerializer
-from .models import FriendRequests
+from .serializers import UserSerializer, UserSignUpSerializer, FriendRequestsSerializer, FriendSerializer
+from .models import FriendRequests, Friend
 
 User = get_user_model()
 # Create your views here.
@@ -43,7 +44,7 @@ class UserViewSet(ModelViewSet):
     def get_queryset(self): 
         if self.request.query_params.get('type') == 'recommendations':
             return User.objects.exclude(id=self.request.user.id).annotate(post_count=Count('posts')).order_by('-post_count').distinct()[:4]
-        return User.objects.filter(id=self.request.user.id)
+        return User.objects.filter(id=self.request.user.id).prefetch_related(Prefetch('friends', queryset=Friend.objects.filter(user=self.request.user)))
     
 
 class FriendRequestsViewSet(ModelViewSet):
@@ -51,37 +52,25 @@ class FriendRequestsViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        return FriendRequests.objects.filter(created_for=self.request.user.id)
-    
-    def list(self, request, *args, **kwargs):
-        sent_queryset = self.get_queryset().filter(status='sent')
-        friends_queryset = User.objects.get(id=request.user.id).friends.all()
+        return FriendRequests.objects.filter(created_for=self.request.user)
 
-        sent_serializer = FriendRequestsSerializer(sent_queryset, many=True, context={'request': request})
-        accepted_serialzier = UserSerializer(friends_queryset, many=True, context={'request': request})
-        return Response({
-            'sent': sent_serializer.data,
-            'accepted': accepted_serialzier.data
-        })
+    def update(self, request, *args, **kwargs):
+        with transaction.atomic():
+            instance = self.get_object()
+            serializer = self.serializer_class(instance, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            if instance.status == 'accepted':
+                Friend.objects.create(user=instance.created_for, friend=instance.created_by)
+                Friend.objects.create(user=instance.created_by, friend=instance.created_for)
+        
+        return Response(serializer.data)
 
-    
-    @action(detail=False, methods=['get'])
-    def get_friends(self, request, *args, **kwargs):
-        friends = User.objects.get(id=request.query_params.get('id')).friends.all()
-        friends_serializer = UserSerializer(friends, many=True, context={'request': request})
-        return Response({
-            'friends': friends_serializer.data
-        })
 
-    
-    @action(detail=True, methods=['put'])
-    def update_status(self, request, *args, **kwargs):
-        status = request.query_params.get('status')
-        obj = self.get_object()
-        obj.status = status
-        user = request.user
-        obj.save()
-        user.friends.add(obj.created_by)
-        user.save()
+class FriendsViewSet(ListAPIView):
+    serializer_class = FriendSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Friend.objects.select_related('user', 'friend')
 
-        return Response(FriendRequestsSerializer(obj).data)
+    def get_queryset(self):
+        return self.queryset.filter(user=self.kwargs.get('id'))

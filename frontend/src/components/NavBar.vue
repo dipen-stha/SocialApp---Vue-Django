@@ -1,11 +1,26 @@
 <script setup>
 import { useUserStore } from '@/stores/user';
+import { watch, computed, onBeforeMount } from 'vue';
+import { useRouter } from 'vue-router';
 
 const userStore = useUserStore()
 
-const isAuthenticated = userStore.user.isAuthenticated
-const userId = userStore.user.id
-console.log(isAuthenticated)
+const router = useRouter();
+const isAuthenticated = computed(() =>userStore.user.isAuthenticated)
+const userId = computed(() => userStore.user.id)
+
+onBeforeMount(() => {
+  
+})
+
+const logout = () => {
+  userStore.removeToken()
+  router.push('/login')
+}
+
+watch(userStore, () => {
+
+})
 </script>
 
 <template>
@@ -24,7 +39,7 @@ console.log(isAuthenticated)
                 d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
           </RouterLink>
-          <RouterLink to="#" class="hover:text-purple-500">
+          <RouterLink to="/chat" class="hover:text-purple-500">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
               stroke="currentColor" class="size-6">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -46,11 +61,20 @@ console.log(isAuthenticated)
             </svg>
           </RouterLink>
         </div>
-        <template class="menu-right" v-if="isAuthenticated">
-          <RouterLink :to="{name:'profile', params:{ id:userId }}">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjYaK0N_g8erthyNgnhxn8dse9ImHEXm6gpw&s"
-              class="rounded-full h-10 w-10" />
-          </RouterLink>
+        <template class="menu-right" v-if="userStore && isAuthenticated">
+            <div class="group relative">
+              <div>
+                <img :src="userStore.user.avatar"
+                  class="rounded-full h-10 w-10" />
+              </div>
+              <div class="hidden group-hover:block absolute right-3 bg-gray-200 rounded-l-lg rounded-br-lg">
+                <div v-if="userId" class="hover:bg-gray-500 text-gray-800 hover:text-white w-full rounded-tl-lg px-3 py-2 cursor-pointer">
+                  <RouterLink :to="{name:'profile', params:{ id:userId }}">Profile
+                  </RouterLink>
+                </div>
+                <div class="hover:bg-gray-500 text-gray-800 hover:text-white w-full rounded-b-lg px-3 py-2 cursor-pointer" @click="logout">Logout</div>
+              </div>
+            </div>
         </template>
         <template v-else class="menu-right">
           <div class="">

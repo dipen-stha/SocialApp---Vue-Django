@@ -20,7 +20,7 @@ class PostViewSet(ModelViewSet):
     def get_queryset(self):
         if self.request.query_params.get('user'):
             return Post.objects.filter(created_by_id=self.request.query_params.get('user')).select_related('created_by').prefetch_related('attachments')
-        return Post.objects.select_related('created_by').prefetch_related('attachments').filter(Q(created_by=self.request.user) | Q(created_by__in=self.request.user.friends.all()))
+        return Post.objects.select_related('created_by').prefetch_related('attachments').filter(Q(created_by=self.request.user))
     
         
     def list(self, request, *args, **kwargs):

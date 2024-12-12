@@ -41,7 +41,7 @@ export const useUserStore = defineStore('user', () => {
 
             user.refresh = null
             user.access = null
-            user.isAuthenticated = null
+            user.isAuthenticated = false
             user.id = null
             user.name = null
             user.email = null
@@ -53,11 +53,11 @@ export const useUserStore = defineStore('user', () => {
             Cookies.set('user.email', '')
         }
 
-    const setUserInfo = (user) => {
+    const setUserInfo = (userInfo) => {
 
-            user.id = user.id
-            user.name = user.name
-            user.email = user.email
+            user.id = userInfo.id
+            user.name = userInfo.name
+            user.email = userInfo.email
             Cookies.set('user.id', user.id)
             Cookies.set('user.name', user.name)
             Cookies.set('user.email', user.email)
