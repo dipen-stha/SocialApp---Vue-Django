@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Prefetch
+from django.db.models import Count, Prefetch, Q
 from django.db import transaction
 
 from rest_framework.generics import CreateAPIView, ListAPIView
@@ -52,12 +52,12 @@ class FriendRequestsViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        return FriendRequests.objects.filter(created_for=self.request.user)
+        return FriendRequests.objects.filter(Q(created_for=self.request.user) | Q(created_by=self.request.user))
 
     def update(self, request, *args, **kwargs):
         with transaction.atomic():
             instance = self.get_object()
-            serializer = self.serializer_class(instance, data=request.data, partial=True)
+            serializer = self.serializer_class(instance, data=request.data, context={"request": request}, partial=True)
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             if instance.status == 'accepted':

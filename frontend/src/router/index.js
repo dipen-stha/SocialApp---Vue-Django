@@ -8,6 +8,7 @@ import ProfileView from '@/views/ProfileView.vue'
 import FriendsView from '@/views/FriendsView.vue'
 import PostDetailView from '@/views/PostDetailView.vue'
 import ChatView from '@/views/ChatView.vue'
+import { useUserStore } from '@/stores/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -66,6 +67,13 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
   ],
+})
+
+router.beforeEach((to, from) => {
+  const { user } = useUserStore()
+  if(!user.isAuthenticated && !['login', 'signup'].includes(to.name)){
+    return { name: 'login'}
+  }
 })
 
 export default router
