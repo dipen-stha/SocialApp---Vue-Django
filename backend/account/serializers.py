@@ -5,6 +5,8 @@ from rest_framework.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 
+from commons.serializers import DynamicFieldsModelSerializer
+
 from .models import FriendRequests, Friend
 
 User = get_user_model()
@@ -33,9 +35,10 @@ class FriendListSerializer(ModelSerializer):
         fields = ['friend','user']
 
 
-class UserSerializer(ModelSerializer):
+class UserSerializer(DynamicFieldsModelSerializer):
     friends_count = serializers.SerializerMethodField()
     friends = FriendListSerializer(many=True)
+
     class Meta:
         model = User
         fields = ['id','email', 'name', 'avatar', 'is_staff', 'is_active', 'is_superuser', 'last_login', 'friends_count', 'friends']
@@ -56,8 +59,6 @@ class UserSearchSerializer(ModelSerializer):
 
 
 class FriendRequestsSerializer(ModelSerializer):
-    created_for = UserSerializer(read_only=True)
-    created_by = UserSerializer(read_only=True)
 
     class Meta:
         model = FriendRequests

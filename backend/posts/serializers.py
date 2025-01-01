@@ -13,10 +13,10 @@ class PostAttachmentSerializers(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     attachments = PostAttachmentSerializers(many=True)
-    created_by = UserSerializer(read_only=True)
-    likes_count = serializers.IntegerField()
-    comments_count = serializers.IntegerField()
-    created_at_formatted = serializers.CharField()
+    created_by = UserSerializer(fields=['id', 'name', 'avatar'],read_only=True)
+    likes_count = serializers.IntegerField(read_only=True)
+    comments_count = serializers.IntegerField(read_only=True)
+    created_at_formatted = serializers.CharField(read_only=True)
 
     class Meta:
         model = Post
@@ -24,8 +24,8 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_fields(self):
         fields = super().get_fields()
-        request = self.context.get('context', None)
-        if request and request.method.lower() == 'get' or 'retrieve':
+        request = self.context.get('request', None)
+        if request and request.method.lower() == ('get' or 'retrieve'):
             if 'likes' not in fields:
                 fields['likes'] = LikeSerializer(many=True)
             if 'comments' not in fields:
@@ -44,7 +44,6 @@ class PostSerializer(serializers.ModelSerializer):
     
 
 class LikeSerializer(serializers.ModelSerializer):
-    created_by = UserSerializer(read_only=True)
 
     class Meta:
         model = Like
@@ -66,13 +65,15 @@ class LikeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
-        instance, _ = Like.objects.get_or_create(**validated_data)
+        instance, created = Like.objects.get_or_create(**validated_data)
+        if not created:
+            raise 
         instance.save()
         return instance
     
 
 class CommentSerializer(serializers.ModelSerializer):
-    created_by = UserSerializer(read_only=True)
+    created_by = UserSerializer(fields=['avatar', 'name'],read_only=True)
     post = serializers.PrimaryKeyRelatedField(read_only=True)
     created_at_formatted = serializers.CharField()
 

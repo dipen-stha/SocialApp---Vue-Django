@@ -6,7 +6,7 @@ from .models import Conversation, ConversationMessage
 
 
 class ConversationSerializer(serializers.ModelSerializer):
-    users = UserSerializer(many=True, read_only=True)
+    users = UserSerializer(fields=['id', 'name', 'avatar'], many=True, read_only=True)
     formatted_modified_at = serializers.CharField()
 
     class Meta:
@@ -15,8 +15,8 @@ class ConversationSerializer(serializers.ModelSerializer):
 
 
 class ConversationMessageSerializer(serializers.ModelSerializer):
-    created_by = UserSerializer(read_only=True)
-    sent_to = UserSerializer(read_only=True)
+    created_by = UserSerializer(fields=['id', 'name', 'avatar'], read_only=True)
+    sent_to = UserSerializer(fields=['id', 'name', 'avatar'], read_only=True)
     conversation = ConversationSerializer(read_only=True)
     formatted_created_at = serializers.CharField(read_only=True)
 

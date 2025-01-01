@@ -43,16 +43,17 @@ class UserViewSet(ModelViewSet):
     
     def get_queryset(self): 
         if self.request.query_params.get('type') == 'recommendations':
-            return User.objects.exclude(id=self.request.user.id).annotate(post_count=Count('posts')).order_by('-post_count').distinct()[:4]
-        return User.objects.filter(id=self.request.user.id).prefetch_related(Prefetch('friends', queryset=Friend.objects.filter(user=self.request.user)))
-    
+            return User.objects.exclude(id=self.request.user.id).annotate(post_count=Count('posts')).order_by('-post_count').prefetch_related('friends').distinct()[:4]
+
+        return User.objects.filter(id=self.request.user.id).prefetch_related('friends')
+
 
 class FriendRequestsViewSet(ModelViewSet):
     serializer_class = FriendRequestsSerializer
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        return FriendRequests.objects.filter(Q(created_for=self.request.user) | Q(created_by=self.request.user))
+        return FriendRequests.objects.filter(Q(created_for=self.request.user) | Q(created_by=self.request.user)).select_related('created_for', 'created_by')
 
     def update(self, request, *args, **kwargs):
         with transaction.atomic():

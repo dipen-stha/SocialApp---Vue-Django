@@ -1,62 +1,3 @@
-<script setup>
-import axios from 'axios';
-import { onMounted, onUnmounted, ref, watch } from 'vue';
-import BaseModal from './BaseModal.vue';
-import PostDetail from './PostDetail.vue';
-import { toggleBodyScroll } from '@/utils/scroll';
-
-
-    const props = defineProps({
-        post: Object || null
-    })
-
-    const postDetail = ref(null)
-    const modalActive = ref(false);
-
-    const handleLike = async (postId) => {
-        await axios
-        .post(`/api/posts/${postId}/add_likes/`)
-        .then(response => {
-            if(response.data){
-                props.post.likes_count += 1
-            }
-        })
-        .catch(error => {
-            console.log(error)
-        })
-    }
-
-    const toggleModal = (postId) => {
-        modalActive.value = !modalActive.value;
-        if(modalActive.value) {
-            toggleBodyScroll(true);
-
-            if(postId) fetchPost(postId);
-        } else {
-            toggleBodyScroll(false);
-        }
-    }
-    
-    const fetchPost = async(postId) => {
-        await axios
-        .get(`/api/posts/${postId}`)
-        .then(response => {
-            postDetail.value = response.data
-        })
-    }
-
-    const handleKeyDown = (event) => {
-        if (event.key === "Escape" && modalActive.value){
-            toggleModal();
-        }
-    }
-
-    onMounted(() => document.addEventListener("keydown", handleKeyDown));
-    onUnmounted(() => document.removeEventListener("keydown", handleKeyDown));
-
-
-</script>
-
 <template>
     <div class="p-4 bg-white border border-gray-200 mb-6 rounded">
                 <div class="flex justify-between mb-6 items-center">
@@ -105,6 +46,69 @@ import { toggleBodyScroll } from '@/utils/scroll';
                 <PostDetail v-if="postDetail" :postDetail="postDetail"/>
             </BaseModal>
 </template>
+
+<script setup>
+import axios from 'axios';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
+import BaseModal from './BaseModal.vue';
+import PostDetail from './PostDetail.vue';
+import { toggleBodyScroll } from '@/utils/scroll';
+
+
+    const props = defineProps({
+        post: Object || null
+    })
+
+    const postDetail = ref(null)
+    const modalActive = ref(false);
+
+    const handleLike = async (postId) => {
+        try{
+            const response = await axios.post(`/api/posts/${postId}/add_likes/`)
+            if(response.data){
+                props.post.likes_count += 1
+            }
+            const notificationResponse = await axios.post(`/api/notification/create/`, {
+                "post_id": postId,
+                "notification_type": "post_like",
+            })
+            console.log(notificationResponse.data)
+        } catch (error){
+            console.log(error)
+        }
+    }
+
+    const toggleModal = (postId) => {
+        modalActive.value = !modalActive.value;
+        if(modalActive.value) {
+            toggleBodyScroll(true);
+
+            if(postId) fetchPost(postId);
+        } else {
+            toggleBodyScroll(false);
+        }
+    }
+    
+    const fetchPost = async(postId) => {
+        await axios
+        .get(`/api/posts/${postId}`)
+        .then(response => {
+            postDetail.value = response.data
+        })
+    }
+
+    const handleKeyDown = (event) => {
+        if (event.key === "Escape" && modalActive.value){
+            toggleModal();
+        }
+    }
+
+    onMounted(() => document.addEventListener("keydown", handleKeyDown));
+    onUnmounted(() => document.removeEventListener("keydown", handleKeyDown));
+
+
+</script>
+
 
 <style scoped>
 body{

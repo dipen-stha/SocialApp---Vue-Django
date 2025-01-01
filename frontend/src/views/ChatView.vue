@@ -63,7 +63,7 @@
 <script setup>
 import { useUserStore } from '@/stores/user';
 import axios from 'axios';
-import { onMounted, ref, computed, reactive } from 'vue';
+import { onMounted, ref, computed, onBeforeUnmount,reactive } from 'vue';
 
 const chats = ref(null)
 
@@ -80,6 +80,8 @@ const conversationDetails = reactive({
     sent_to: ''
 })
 
+let socket = null;
+
 const user = userStore.user
 
 const fetchChats = async () => {
@@ -88,21 +90,37 @@ const fetchChats = async () => {
 }
 
 const fetchConvo = async (chatId, chatUser) => {
-    try {        
+    try {
+        console.log(chatId, chatUser)
         const response = await axios.get(`api/chat/conversation-message/`)
         messages.value = response.data
         conversationSelected.value = true
         conversationDetails.id = chatId
         conversationDetails.sent_to = chatUser
-        console.log(conversationDetails)
+
     } catch (error) {
         console.log(error)
         conversationSelected.value = false
     }
 }
 
+const connectChatSocket = async () => {
+    const socketUrl = 'ws://localhost:8000/ws/chat/'
+    socket = new WebSocket(socketUrl);
+
+    socket.onopen = () => {
+        console.log('Chat socket connected')
+    }
+
+    socket.onmessage = (event) => {
+        const data = JSON.parse(event.data)
+        fetchConvo(data.data.id, data.data.sent_to)
+    }
+}
+
 const sendMessage = async(chatId) => {
     try{
+        console.log(conversationDetails.id, conversationDetails.sent_to)
         const response = await axios.post('api/chat/conversation-message/', {
             "message": textMessage.value,
             "conversation": conversationDetails.id,
@@ -117,7 +135,14 @@ const sendMessage = async(chatId) => {
     }
 }
 
+onBeforeUnmount(() => {
+  if (socket) {
+    socket.close();
+  }
+});
+
 onMounted(() => {
     fetchChats()
+    connectChatSocket()
 })
 </script>

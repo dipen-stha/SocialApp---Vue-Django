@@ -19,4 +19,22 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router, axios)
 
+app.directive('click-outside', {
+    beforeMount: function (element, binding) {
+        console.log({
+            element,
+            binding
+        });
+        element.clickOutsideEvent = function (event) {
+            if (!(element === event.target || element.contains(event.target)) && typeof binding.value === 'function') {
+                binding.value(event);
+            }
+        };
+        document.body.addEventListener('click', element.clickOutsideEvent)
+    },
+    unmounted: function (element) {
+        document.body.removeEventListener('click', element.clickOutsideEvent)
+    }
+});
 app.mount('#app')
+

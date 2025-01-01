@@ -38,6 +38,7 @@ const handleSubmit = async () => {
         .post('/api/posts/', content)
         .then(response => {
             posts.value.unshift(response.data)
+            content.body = ''
         })
 }
 
@@ -53,7 +54,6 @@ const determineRelationshipState = async () => {
         const currentUserId = userStore.user.id;
         const sentRequest = requests.find(item => item.created_for.id === route.params.id && item.created_by.id === currentUserId);
         const receivedRequest = requests.find(item => item.created_by.id === route.params.id && item.created_for.id === currentUserId);
-        console.log(requests)
         if (user.value.friends.find(item => item.friend === currentUserId)) {
             relationshipState.value = 'friends';
             isFriend.value = true;

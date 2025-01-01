@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models import Prefetch
 
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
@@ -28,5 +29,5 @@ class ConversationMessageViewSet(ModelViewSet):
     serializer_class = ConversationMessageSerializer
 
     def get_queryset(self):
-        return ConversationMessage.objects.filter(conversation__users__in=[self.request.user])
+        return ConversationMessage.objects.filter(conversation__users__in=[self.request.user]).select_related().prefetch_related('conversation__users')
 
