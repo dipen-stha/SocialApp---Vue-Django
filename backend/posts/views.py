@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Prefetch
 from django.shortcuts import get_object_or_404
 
 from .models import Post, PostAttachment, Like, Comment
@@ -16,13 +16,19 @@ from account.serializers import UserSerializer, UserSearchSerializer
 class PostViewSet(ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
+    queryset = Post.objects.select_related('created_by').prefetch_related(
+        'attachments',
+        Prefetch('likes', queryset=Like.objects.select_related('created_by')),
+        Prefetch('comments', queryset=Comment.objects.select_related('created_by', 'post'))
+        )
 
     def get_queryset(self):
         if self.request.query_params.get('user'):
-            return Post.objects.filter(created_by_id=self.request.query_params.get('user')).select_related('created_by').prefetch_related('attachments')
-        return Post.objects.select_related('created_by').prefetch_related('attachments').filter(Q(created_by=self.request.user) | Q(created_by__in=self.request.user.friends.all()))
-    
-        
+        #     return Post.objects.filter(created_by_id=self.request.query_params.get('user')).select_related('created_by').prefetch_related('attachments')
+        # return Post.objects.select_related('created_by').prefetch_related('attachments').filter(created_by=self.request.user)
+            return self.queryset.filter(created_by_id=self.request.query_params.get('user'))
+        return self.queryset.filter(created_by=self.request.user)
+
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         user_id = request.query_params.get('user', None)
@@ -63,7 +69,7 @@ class PostViewSet(ModelViewSet):
     @action(detail=True, methods=['post'])
     def add_likes(self, request, *args, **kwargs):
         data = {
-            'post': get_object_or_404(Post, id=kwargs.get('pk'))
+            'post': get_object_or_404(Post, id=kwargs.get('pk')).id
         }
         like_serializer = LikeSerializer(data=data, context={'request': request})
         if like_serializer.is_valid():

@@ -36,25 +36,26 @@ const handleRequest = async (status: string, id: string) => {
 }
 
 const getFriends = async () => {
-    if (user.id === route.params.id) {
-        await axios
-            .get(`/api/friends/`)
-            .then(response => {
-                acceptedFriends.value = response.data.accepted
-                pendingFriends.value = response.data.sent
-                console.log(pendingFriends.value)
-            })
-    } else {
-        await axios
-            .get(`api/friends/get_friends/?id=${route.params.id}`)
-            .then(response => {
-                acceptedFriends.value = response.data.friends
-            })
+    try {
+        const response = await axios.get(`api/friends/${route.params.id}/`)
+        acceptedFriends.value = response.data
+    } catch (error) {
+        console.log(error)
     }
 }
 
-watch(route, () => {
+const getPendingFriends = async () => {
+    try {
+        const response = await axios.get('api/friend-requests/')
+        pendingFriends.value = response.data
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+watch(() => route.params, () => {
     getFriends()
+    getPendingFriends()
 })
 
 </script>
@@ -62,7 +63,7 @@ watch(route, () => {
 <template>
     <div v-if="user" class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
         <div class="main-middle col-span-3 space-y-4">
-            <div v-if="user.id === route.params.id" class="p-4 bg-white rounded border border-gray-200">
+            <div v-if="(user.id === route.params.id) && pendingFriends" class="p-4 bg-white rounded border border-gray-200">
                 <div class="w-full border-b pb-3">
                     <h1 class="text-3xl font-semibold">Friend Requests</h1>
                 </div>
@@ -71,7 +72,7 @@ watch(route, () => {
                         <li class="mb-4" v-for="user, index in pendingFriends" :key="index">
                             <div class="flex justify-between items-center space-x-2">
                                 <div class="flex space-x-5 items-center">
-                                    <img :src="user.created_by.avatar" class="rounded-full h-10 w-10" />
+                                    <img :src="user.friend.avatar" class="rounded-full h-10 w-10" />
                                     <p class="text-xl font-semibold">{{ user.created_by.name }}</p>
                                 </div>
                                 <div class="flex space-x-4">
@@ -94,8 +95,8 @@ watch(route, () => {
                         <li class="mb-4" v-for="user, index in acceptedFriends" :key="index">
                             <div class="flex justify-between items-center space-x-2">
                                 <div class="flex space-x-4 items-center">
-                                    <img :src="user.avatar" class="rounded-full h-10 w-10" />
-                                    <p class="truncate ... font-semibold">{{ user.name }}</p>
+                                    <img :src="user.friend.avatar" class="rounded-full h-10 w-10" />
+                                    <p class="truncate ... font-semibold">{{ user.friend.name }}</p>
                                 </div>
                                 <button
                                     class="bg-purple-500 hover:bg-purple-700 px-2 py-1 rounded-lg text-gray-100 hover:text-white">Show</button>

@@ -33,7 +33,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(blank=True, default='', unique=True)
     name = models.CharField(max_length=255, blank=True, default='')
     avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
-    friends = models.ManyToManyField('self')
 
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
@@ -67,3 +66,28 @@ class FriendRequests(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='created_friend_requests', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('created_by', 'created_for')
+    
+    def __str__(self):
+        return f"Request from {self.created_by.name} to {self.created_for.name}"
+
+
+class Friend(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4,editable=False)
+    user = models.ForeignKey(User, related_name="friends", on_delete=models.CASCADE)
+    friend = models.ForeignKey(User, related_name="friends_of", on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'friend')
+        indexes = [
+            models.Index(fields=['user', 'friend'])
+        ]
+
+    def __str__(self):
+        return f"{self.user.name} is friends with {self.friend.name}"
+
+    

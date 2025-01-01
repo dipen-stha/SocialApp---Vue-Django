@@ -22,8 +22,12 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),  
     path('api/', include('account.urls')),
-    path('api/', include('posts.urls'))
+    path('api/', include('posts.urls')),
+    path('api/chat/', include('chat.urls')),
+    path('api/notification/', include('notification.urls')),
 ]
+
+urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
