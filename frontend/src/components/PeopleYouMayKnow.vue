@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import axios from 'axios';
+import apiClient from "@/api/client";
 import { onMounted, ref } from 'vue';
 
 const users = ref([])
@@ -29,15 +29,26 @@ onMounted(() => {
     userRecommendations()
 })
 
+// const userRecommendations = async() => {
+//     await axios
+//     .get(`/api/user/?type=recommendations`)
+//     .then(response => {
+//         users.value = response.data
+//     })
+//     .catch(error => {
+//         console.log(error)
+//     })
+// }
+
 const userRecommendations = async() => {
-    await axios
-    .get(`/api/user/?type=recommendations`)
-    .then(response => {
-        users.value = response.data
-    })
-    .catch(error => {
+    try{
+        const response = apiClient.get(`/api/account/user/?type=recommendations`)
+        if (response.data) {
+            users.value = response.data
+        }
+    } catch(error) {
         console.log(error)
-    })
+    }
 }
 
 

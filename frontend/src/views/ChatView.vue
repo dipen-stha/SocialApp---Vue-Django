@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/user/user';
 import axios from 'axios';
 import { onMounted, ref, computed, onBeforeUnmount,reactive } from 'vue';
 

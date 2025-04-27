@@ -1,40 +1,37 @@
 import './assets/main.css'
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-
 import App from './App.vue'
-import router from './router'
+import Vue3Toastify from 'vue3-toastify'
+import 'vue3-toastify/dist/index.css'
+import apiClient from '@/api/client'
+import initRouter from './utils/setup/routerSetup'
 
-import axios from 'axios'
-import Cookies from 'js-cookie'
-
-axios.defaults.baseURL = 'http://localhost:8000'
-
-if (Cookies.get('access')){
-    axios.defaults.headers.common['Authorization'] = `Bearer ${Cookies.get('access')}`
-}
 const app = createApp(App)
 
-app.use(createPinia())
-app.use(router, axios)
+app.use(createPinia());
+
+initRouter(app);
+
+app.use(Vue3Toastify, {
+  autoClose: 3000,
+  position: 'bottom-right',
+})
 
 app.directive('click-outside', {
-    beforeMount: function (element, binding) {
-        console.log({
-            element,
-            binding
-        });
-        element.clickOutsideEvent = function (event) {
-            if (!(element === event.target || element.contains(event.target)) && typeof binding.value === 'function') {
-                binding.value(event);
-            }
-        };
-        document.body.addEventListener('click', element.clickOutsideEvent)
-    },
-    unmounted: function (element) {
-        document.body.removeEventListener('click', element.clickOutsideEvent)
+  beforeMount(el, binding) {
+    el.clickOutsideEvent = (event) => {
+      if (!(el === event.target || el.contains(event.target))) {
+        binding.value(event)
+      }
     }
-});
-app.mount('#app')
+    document.addEventListener('click', el.clickOutsideEvent)
+  },
+  unmounted(el) {
+    document.removeEventListener('click', el.clickOutsideEvent)
+  }
+})
 
+app.config.globalProperties.$api = apiClient
+
+app.mount('#app')

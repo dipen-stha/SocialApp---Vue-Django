@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .color-transition {
+    @apply cursor-pointer transition delay-75 duration-300 ease-in-out;
+  }
+  .btn-primary {
+    @apply px-2 py-1 bg-purple-500 hover:bg-indigo-700 rounded-lg cursor-pointer;
+  }
+  .avatar {
+    @apply rounded-full h-10 w-10;
+  }
+}

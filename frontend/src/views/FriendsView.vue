@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
 import Trends from '@/components/Trends.vue';
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/user/user';
 import axios from 'axios';
 import { onMounted, ref, reactive, watch } from 'vue';
 import { useRoute } from 'vue-router';
