@@ -35,7 +35,6 @@ class SignupView(CreateAPIView):
 
         response.data['tokens'] = self.tokens
         return response
-    
 
 class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer

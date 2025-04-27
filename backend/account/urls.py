@@ -10,9 +10,9 @@ router.register(r'user', UserViewSet, basename="user")
 router.register(r'friend-requests', FriendRequestsViewSet, basename='friends_requests'),
 
 urlpatterns =[
-    path('account/login/', TokenObtainPairView.as_view(), name='token_obtain'),
-    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('account/signup/', SignupView.as_view(), name='signup'),
+    path('authenticate/login/', TokenObtainPairView.as_view(), name='token_obtain'),
+    path('authenticate/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('signup/', SignupView.as_view(), name='signup'),
     path('friends/<str:id>/', FriendsViewSet.as_view(), name="friends")
 ]
 

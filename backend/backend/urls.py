@@ -19,15 +19,19 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
 
+from debug_toolbar.toolbar import debug_toolbar_urls
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+
 urlpatterns = [
-    path('admin/', admin.site.urls),  
-    path('api/', include('account.urls')),
+    path('admin/', admin.site.urls),
+    path('api/account/', include('account.urls')),
     path('api/', include('posts.urls')),
     path('api/chat/', include('chat.urls')),
     path('api/notification/', include('notification.urls')),
-]
-
-urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+] + debug_toolbar_urls()
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

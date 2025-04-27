@@ -5,7 +5,7 @@ from posts.utils import format_time
 
 # Create your models here.
 class Conversation(models.Model):
-    users = models.ManyToManyField(User, related_name='cnversations')
+    users = models.ManyToManyField(User, related_name='conversations')
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -18,10 +18,11 @@ class Conversation(models.Model):
         return format_time(self.modified_at)
 
 
+
 class ConversationMessage(models.Model):
     conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE)
     message = models.TextField()
-
+    is_read = models.BooleanField(default=False)
     sent_to = models.ForeignKey(User, related_name='receivers', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='senders', on_delete=models.CASCADE) 

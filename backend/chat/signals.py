@@ -9,7 +9,6 @@ from . models import ConversationMessage
 
 @receiver(post_save, sender=ConversationMessage)
 def message_create(sender, instance, created, **kwargs):
-    print('It hit here')
     if created:
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
