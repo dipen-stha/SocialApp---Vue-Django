@@ -27,12 +27,11 @@ class ConversationMessageSerializer(serializers.ModelSerializer):
     created_by = UserSerializer(fields=['id', 'name', 'avatar'], read_only=True)
     sent_to = UserSerializer(fields=['id', 'name', 'avatar'], read_only=True)
     conversation = ConversationSerializer(read_only=True)
-    formatted_created_at = serializers.CharField(read_only=True)
     is_read = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = ConversationMessage
-        fields = ['id', 'created_by', 'is_read', 'sent_to', 'created_at', 'message', 'conversation', 'formatted_created_at']
+        fields = ['id', 'created_by', 'is_read', 'sent_to', 'created_at', 'message', 'conversation']
 
     def get_fields(self):
         fields = super().get_fields()

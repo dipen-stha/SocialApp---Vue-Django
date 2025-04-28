@@ -125,7 +125,7 @@ watch(() => route.params, () => {
                 </div>
                 <div v-if="userStore.user?.id !== route.params.id" class="">
                     <div v-if="relationshipState === 'friends'" class="flex flex-wrap gap-y-2">
-                        <button class="bg-emerald-500 hover:bg-emerald-600 px-2 py-2 rounded-lg mt-4 text-white w-1/2">
+                        <button class="bg-sky-500 hover:bg-sky-600 px-2 py-2 rounded-lg mt-4 text-white w-1/2">
                             <span class="flex space-x-2 text-xs">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="currentColor" class="size-4">
@@ -186,7 +186,7 @@ watch(() => route.params, () => {
                         </button>
                     </div>
                     <div v-else-if="!isFriend && hasRequest" class="flex space-x-2 justify-center text-center">
-                        <button class="bg-emerald-500 hover:bg-emerald-600 px-2 py-2 rounded-lg mt-4 text-white w-1/2"
+                        <button class="bg-sky-500 hover:bg-sky-600 px-2 py-2 rounded-lg mt-4 text-white w-1/2"
                             @click="handleRequest('accepted')">
                             <span class="flex space-x-2 text-xs">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

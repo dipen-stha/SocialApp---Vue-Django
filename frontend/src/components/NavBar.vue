@@ -1,30 +1,37 @@
 <template>
-  <nav class="py-10 px-8 border-b border-gray-200">
+  <nav class="py-10 px-8 border-b border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900">
     <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between">
         <div class="menu-left">
-          <RouterLink to="#" class="text-xl">Chat</RouterLink>
+          <RouterLink to="#" class="text-xl text-stone-900 dark:text-stone-50">Chat</RouterLink>
         </div>
         <div v-if="isAuthenticated" class="menu-center flex space-x-12">
-          <RouterLink to="/feed" class="text-purple-700 hover:text-purple-500">
-            <div class="transition delay-10 duration-300 ease-in-out hover:scale-110">
-              <Icon name="House" />
+          <RouterLink to="/feed" class="text-sky-500">
+            <div
+              class=""
+            >
+              <Icon name="House" class="text-sky-500 dark:text-sky-600 color-transition hover:text-amber-300 hover:scale-110"/>
             </div>
           </RouterLink>
           <div>
             <Dropdown title="Chats" width="lg">
               <template #icon>
-                <Icon name="MessageCircle"/>
+                <Icon name="MessageCircle" class="text-sky-500 dark:text-sky-600 color-transition hover:text-amber-300 hover:scale-110"/>
               </template>
               <template #body>
                 <div v-if="chatList" class="flex flex-col">
                   <div v-for="chat in chatList">
-                    <div class="p-2 border-b color-transition hover:bg-gray-100" :class="chat.is_read ? '' : 'bg-gray-50'">
+                    <div
+                      class="p-2 border-b border-stone-200 dark:border-stone-500 color-transition bg-stone-50 hover:bg-stone-300 dark:hover:bg-zinc-800"
+                      :class="chat.is_read ? 'bg-stone-50 dark:bg-zinc-500' : 'bg-stone-200 dark:bg-zinc-600'"
+                    >
                       <div class="flex gap-x-[5px] items-center">
-                        <img :src="getUser(chat).avatar" class="avatar"/>
+                        <img :src="getUser(chat).avatar" class="avatar" />
                         <span>{{ chat.message }}</span>
-                        <span class="ml-auto text-sm text-gray-600">{{ chat.formatted_created_at }}</span>
-                    </div>
+                        <span class="ml-auto text-sm dark:text-stone-50 text-stone-900">{{
+                          timeAgo(chat.created_at)
+                        }}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -34,72 +41,69 @@
               </template>
             </Dropdown>
           </div>
-          <div>
+          <div @click="onNotificationOpen">
             <Dropdown width="lg">
               <template #icon>
-                <Icon name="Bell" />
+                <Icon name="Bell" class="text-sky-500 dark:text-sky-600 color-transition hover:text-amber-300 hover:scale-110"/>
               </template>
               <template #body>
-                <ul>
-                  <li v-for="notification in notificationList">
-                    <div class="flex gap-x-[5px] items-center">
-                      <img class="avatar"/>
+                <div v-if="notificationList" class="flex flex-col">
+                  <div v-for="notification in notificationList">
+                    <div class="flex gap-x-[10px] items-center p-2 border-b border-stone-200 dark:border-stone-500 color-transition bg-stone-50 dark:bg-zinc-700 hover:bg-stone-300 dark:hover:bg-zinc-800 w-full">
+                      <img class="avatar" :src="notification.created_by.avatar"/>
+                      <div class="flex justify-between text-stone-900 dark:text-stone-50 w-full">
+                        <div class="">{{ notification.body }}</div>
+                        <div class="text-sm">{{ timeAgo(notification.created_at) }}</div>
+                      </div>
                     </div>
-                  </li>
-                </ul>
+                  </div>
+                </div>
               </template>
             </Dropdown>
           </div>
-          
 
-          <RouterLink to="/search" class="hover:text-purple-500">
-            <Icon name="Search"/>
+          <RouterLink to="/search">
+            <Icon name="Search" class="text-sky-500 dark:text-sky-600 color-transition hover:text-amber-300 hover:scale-110"/>
           </RouterLink>
         </div>
         <template class="menu-right" v-if="userStore && isAuthenticated">
-          <div class="group relative">
-            <div>
+          <div id="profileDropdown" class="relative">
+            <div @click.stop="toggleDropdown">
               <img
                 :src="userStore.user.avatar"
-                class="rounded-full h-10 w-10"
+                class="rounded-full h-10 w-10 transition delay-25 duration-300 ease-in-out hover:scale-125 cursor-pointer hover:shadow-md"
               />
             </div>
-            <div
-              class="hidden group-hover:block absolute right-3 bg-gray-200 rounded-l-lg rounded-br-lg"
+
+            <transition
+              enter-active-class="transition-all duration-300 ease-out"
+              enter-from-class="transform opacity-0 -translate-y-4 max-h-0"
+              enter-to-class="transform opacity-100 translate-y-0 max-h-40"
+              leave-active-class="transition-all duration-200 ease-in"
+              leave-from-class="transform opacity-100 translate-y-0 max-h-40"
+              leave-to-class="transform opacity-0 -translate-y-4 max-h-0"
             >
               <div
-                v-if="userId"
-                class="hover:bg-gray-500 text-gray-800 hover:text-white w-full rounded-tl-lg px-3 py-2 cursor-pointer"
+                v-if="showDropdown"
+                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg overflow-hidden origin-top"
+                @click.stop
               >
-                <RouterLink :to="{ name: 'profile', params: { id: userId } }"
-                  >Profile
-                </RouterLink>
+                <div class="">
+                  <RouterLink
+                    :to="{ name: 'profile', params: { id: userId } }"
+                    class="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200"
+                  >
+                    Profile
+                  </RouterLink>
+                  <div
+                    @click="logout"
+                    class="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
+                  >
+                    Logout
+                  </div>
+                </div>
               </div>
-              <div
-                class="hover:bg-gray-500 text-gray-800 hover:text-white w-full rounded-b-lg px-3 py-2 cursor-pointer"
-                @click="logout"
-              >
-                Logout
-              </div>
-            </div>
-          </div>
-        </template>
-        <template v-else class="menu-right">
-          <div class="">
-            <RouterLink to="/login">
-              <button
-                class="px-3 py-2 bg-purple-500 hover:bg-purple-700 mx-2 rounded-lg text-white"
-              >
-                Login
-              </button>
-            </RouterLink>
-            <RouterLink to="/signup">
-              <button
-                class="px-3 py-2 bg-purple-500 hover:bg-purple-700 mx-2 rounded-lg text-white"
-              >
-                Sign Up
-              </button>
-            </RouterLink>
+            </transition>
           </div>
         </template>
       </div>
@@ -109,7 +113,6 @@
 
 <script setup>
 import { useUserStore } from "@/stores/user/user";
-import axios from "axios";
 import { watch, computed, ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import Dropdown from "./Dropdown.vue";
@@ -118,6 +121,7 @@ import Icon from "./Icon.vue";
 import { useChatStore } from "@/stores/chat";
 import { useAuthStore } from "@/stores/user/auth";
 import { useNotificationStore } from "@/stores/notification";
+import { timeAgo } from "@/utils/timeAgo";
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
@@ -127,22 +131,53 @@ const chatStore = useChatStore();
 const router = useRouter();
 const { isAuthenticated } = storeToRefs(userStore);
 const { chatList } = storeToRefs(chatStore);
-const { notificationList, notificationStats } = storeToRefs(notificationStore)
+const { notificationList, notificationStats } = storeToRefs(notificationStore);
 
 const userId = computed(() => userStore.user.id);
 
+const showDropdown = ref(false)
+const trigger =ref(null)
+const dropDown = ref(null)
+
+const toggleDropdown = () => {
+  showDropdown.value = !showDropdown.value
+}
+
 const logout = () => {
-  
-};
+  authStore.logout();
+  showDropdown.value = false
+}
+
+const closeOnClickOutside = (event) => {
+  if (
+    showDropdown.value = false &&
+    !trigger.value.contains(event.target) &&
+    !dropDown.value.contains(event.target)
+  ) {
+    showDropdown.value = false
+  }
+}
+
+const onNotificationOpen = async () => {
+  await notificationStore.fetchNotificationList();
+}
+
+onMounted(() => {
+  document.addEventListener('click', closeOnClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', closeOnClickOutside)
+})
 
 const getNotifications = () => {
   notificationStore.fetchNotificationList();
-}
+};
 
 const getUser = (chatObject) => {
-  if(chatObject.created_by.id === userStore.user.id) return chatObject.sent_to
-  return chatObject.created_by
-}
+  if (chatObject.created_by.id === userStore.user.id) return chatObject.sent_to;
+  return chatObject.created_by;
+};
 
 const getChats = async () => {
   await chatStore.fetchChatList();
@@ -179,7 +214,7 @@ onBeforeUnmount(() => {
 
 onMounted(() => {
   connectSocket();
-  notificationStore.fetchNotificationStats()
+  notificationStore.fetchNotificationStats();
   getChats();
 });
 </script>

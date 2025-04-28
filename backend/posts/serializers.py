@@ -13,15 +13,15 @@ class PostAttachmentSerializers(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    attachments = PostAttachmentSerializers(many=True)
+    attachments = PostAttachmentSerializers(many=True, required=False)
     created_by = UserSerializer(fields=['id', 'name', 'avatar'],read_only=True)
     likes_count = serializers.IntegerField(read_only=True)
     comments_count = serializers.IntegerField(read_only=True)
-    created_at_formatted = serializers.CharField(read_only=True)
+    body = serializers.CharField()
 
     class Meta:
         model = Post
-        fields = ['id', 'body', 'created_at_formatted', 'created_by', 'attachments', 'likes_count', 'comments_count']
+        fields = ['id', 'body', 'created_at', 'created_by', 'attachments', 'likes_count', 'comments_count']
 
     def get_fields(self):
         fields = super().get_fields()
@@ -32,6 +32,11 @@ class PostSerializer(serializers.ModelSerializer):
             if 'comments' not in fields:
                 fields['comments'] = CommentSerializer(many=True)
         return fields
+
+    def validate_body(self, body):
+        if not body:
+            raise serializers.ValidationError("Post needs to have some content")
+        return body
 
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
@@ -77,11 +82,10 @@ class LikeSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     created_by = UserSerializer(fields=['avatar', 'name'],read_only=True)
     post = serializers.PrimaryKeyRelatedField(read_only=True)
-    created_at_formatted = serializers.CharField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'body', 'post', 'created_at_formatted', 'created_by']
+        fields = ['id', 'body', 'post', 'created_at', 'created_by']
 
     def get_fields(self):
         fields = super().get_fields()

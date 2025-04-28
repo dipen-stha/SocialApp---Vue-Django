@@ -4,19 +4,13 @@
 
 @layer utilities {
   .color-transition {
-    @apply cursor-pointer transition delay-75 duration-300 ease-in-out;
+    @apply cursor-pointer transition duration-150 ease-in;
   }
   .btn-primary {
-    @apply px-[15px] py-[5px] bg-purple-500 hover:bg-purple-700 rounded-md cursor-pointer transition delay-75 duration-300 ease-in-out text-white; 
-  }
-  .btn-lg-primary {
-    @apply px-3 py-2 bg-purple-500 hover:bg-purple-700 rounded-lg cursor-pointer transition delay-75 duration-300 ease-in-out text-white font-semibold;
+    @apply px-[15px] py-[5px] bg-sky-400 hover:bg-sky-500 dark:bg-sky-600 dark:hover:bg-sky-500 rounded-md color-transition text-white hover:shadow-md; 
   }
   .btn-secondary {
-    @apply px-[15px] py-[5px] bg-gray-500 hover:bg-gray-600 rounded-md cursor-pointer transition delay-75 duration-300 ease-in-out text-white;
-  }
-  .btn-lg-secondary {
-    @apply px-3 py-2 bg-gray-500 hover:bg-gray-600 rounded-lg cursor-pointer transition delay-75 duration-300 ease-in-out text-white font-semibold;
+    @apply px-[15px] py-[5px] bg-amber-500 hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-500 rounded-md cursor-pointer transition delay-75 duration-300 ease-in-out text-white hover:shadow-md;
   }
   .avatar {
     @apply rounded-full h-10 w-10;

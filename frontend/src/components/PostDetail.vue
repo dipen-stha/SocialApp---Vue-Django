@@ -6,7 +6,7 @@
                 <p class="text-xl font-semibold">{{ postDetail.created_by.name }}</p>
             </div>
             <div class="">
-                <p class="text-gray-500">{{ postDetail.created_at_formatted }}</p>
+                <p class="text-gray-500">{{ timeAgo(postDetail.created_at) }}</p>
             </div>
         </div>
         <div class="p-3">
@@ -52,7 +52,7 @@
                             :class="{ 'outline-red-600': isEmpty }" v-model="body"
                             placeholder="Write your comment"></textarea>
                         <button type="submit"
-                            class="px-3 py-2 bg-emerald-500 hover:bg-emerald-700 rounded-lg text-gray-100">Comment</button>
+                            class="px-3 py-2 bg-sky-500 hover:bg-sky-700 rounded-lg text-gray-100">Comment</button>
                     </div>
                 </form>
             </div>
@@ -68,7 +68,7 @@
                         <p class="gray-800">{{ comment.body }}</p>
                     </div>
                     <div class="grow text-end pr-2">
-                        <p>{{ comment.created_at_formatted }} ago</p>
+                        <p>{{ timeAgo(comment.created_at) }}</p>
                     </div>
                 </div>
             </div>
@@ -80,6 +80,7 @@
 <script setup>
 import axios from 'axios';
 import { ref } from 'vue';
+import { timeAgo } from '@/utils/timeAgo';
 
 const props = defineProps({
     postDetail: Object

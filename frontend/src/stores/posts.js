@@ -1,13 +1,13 @@
 import apiClient from "@/api/client";
 import { postAPI } from "@/core/endpoints";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 
 export const usePostStore = defineStore("post", () => {
     const postList = ref([]);
     const postDetail = ref(null);
-    const postPayload = ref({
-        body: '',
+    const postPayload = reactive({
+        body: null,
         attachments: []
     });
     
@@ -31,8 +31,12 @@ export const usePostStore = defineStore("post", () => {
 
     const createPost = async () => {
         try{
-            const response = await apiClient.post(postAPI.postCreate, postPayload.value)
-
+            const response = await apiClient.post(postAPI.postCreate, postPayload)
+            if(response.data){
+                postPayload.body = null;
+                postPayload.attachments = [];
+                postList.value.unshift(response.data);
+            }
         } catch(error){
 
         }

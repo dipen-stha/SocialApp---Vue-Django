@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-gray-200 h-screen">
+  <div class="bg-zinc-200 dark:bg-zinc-800 h-screen">
     <div class="h-screen flex justify-center items-center">
-      <div class="min-h-[500px] min-w-[400px] bg-white rounded-md shadow-lg">
+      <div class="min-h-[500px] min-w-[400px] bg-white dark:bg-zinc-500 rounded-md shadow-lg">
         <div class="text-center mt-[30px]">
           <span class="text-xl font-semibold">Login</span>
         </div>
@@ -9,7 +9,7 @@
           <div class="flex h-full justify-center items-center">
             <div class="flex flex-col gap-y-[15px] w-[90%]">
               <div
-                class="flex flex-col gap-y-[10px] border border-gray-100 p-4 rounded-md"
+                class="flex flex-col gap-y-[10px] border border-zinc-100 dark:border-zinc-700 p-4 rounded-md"
               >
                 <div class="text-center" v-if="loginError">
                   <span class="text-red-500"
@@ -19,7 +19,7 @@
                 <div class="flex justify-center">
                   <input
                     type="text"
-                    class="input-field w-full"
+                    class="input-field w-full text-zinc-900"
                     placeholder="Enter Email"
                     v-model="loginPayload.email"
                   />
@@ -27,7 +27,7 @@
                 <div class="flex justify-center">
                   <input
                     type="password"
-                    class="input-field w-full"
+                    class="input-field w-full text-zinc-900"
                     placeholder="Enter Password"
                     v-model="loginPayload.password"
                   />
@@ -36,7 +36,7 @@
               <div>
                 <button
                   type="submit"
-                  class="w-full bg-slate-500 p-2 rounded-md text-white"
+                  class="w-full btn-primary"
                 >
                   Login
                 </button>

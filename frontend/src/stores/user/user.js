@@ -1,15 +1,16 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import apiClient from "@/api/client";
 import { authAPI, userAPI } from "@/core/endpoints";
 
 export const useUserStore = defineStore("user", () => {
   
   const isAuthenticated = ref(false);
-  const user = ref({
-    id: ref(null),
-    name: ref(null),
-    email: ref(null),
+  const user = reactive({
+    id: null,
+    name: null,
+    email: null,
+    avatar: null
   });
   const userRecommendations = ref([])
 
@@ -21,6 +22,7 @@ export const useUserStore = defineStore("user", () => {
         user.id = response.data.id;
         user.name = response.data.name;
         user.email = response.data.email;
+        user.avatar = response.data.avatar;
       }
     } catch (error) {
       user.isAuthenticated = false;

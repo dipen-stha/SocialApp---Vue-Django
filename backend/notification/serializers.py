@@ -11,7 +11,7 @@ class NotificationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Notification
-        fields = ['id', 'created_by', 'body', 'is_read', 'post', 'type', 'friend_request']
+        fields = ['id', 'created_by', 'body', 'is_read', 'post', 'type', 'friend_request', 'created_at']
 
     def get_fields(self):
         fields = super(NotificationSerializer, self).get_fields()

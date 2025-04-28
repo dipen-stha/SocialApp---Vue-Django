@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 bg-white border border-gray-200 mb-6 rounded">
+  <div class="p-4 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 mb-6 rounded">
     <div class="flex justify-between mb-6 items-center">
       <div class="flex items-center space-x-4">
         <img :src="post.created_by.avatar" class="rounded-full h-10 w-10" />
@@ -7,8 +7,8 @@
           <strong>{{ post.created_by.name }}</strong>
         </p>
       </div>
-      <div class="text-gray-400 text-xs">
-        {{ post.created_at_formatted }} ago
+      <div class="text-stone-900 dark:text-stone-50 text-xs">
+        {{ timeAgo(post.created_at) }}
       </div>
     </div>
     <div v-if="post.attachments[0]">
@@ -17,7 +17,7 @@
     </div>
     <div v-else class="py-2">
       <p>{{ post.body }}</p>
-      <p class="text-gray-500 text-xs">#asdas #asdasd</p>
+      <p class="text-stone-900 dark:text-stone-50 text-xs">#asdas #asdasd</p>
     </div>
     <div class="my-6 flex justify-between">
       <div class="flex space-x-6">
@@ -28,7 +28,7 @@
           >
             <Icon name="Heart" />
           </button>
-          <span class="text-gray-500 text-xs"
+          <span class="text-stone-900 dark:text-stone-50 text-xs"
             >{{ post.likes_count }} likes</span
           >
         </div>
@@ -39,7 +39,7 @@
           >
             <Icon name="MessageSquareMore" />
           </button>
-          <span class="text-gray-500 text-xs"
+          <span class="text-stone-900 dark:text-stone-50 text-xs"
             >{{ post.comments_count }} comments</span
           >
         </div>
@@ -61,13 +61,11 @@
         { title: 'Close', emit: 'close' },
         { title: 'Save', emit: 'save' }
       ]"
-      @action="handleModalAction"
     >
       <div class="space-y-4">
         <h3 class="text-lg font-medium">Modal Content</h3>
         <p>This is the dynamic content area. You can put anything here.</p>
-        <input 
-          v-model="inputValue"
+        <input
           class="w-full p-2 border rounded-md"
           placeholder="Type something..."
         />
@@ -83,6 +81,7 @@ import PostDetail from "./PostDetail.vue";
 import { toggleBodyScroll } from "@/utils/scroll";
 import Icon from "./Icon.vue";
 import { usePostStore } from "@/stores/posts";
+import { timeAgo } from "@/utils/timeAgo";
 
 const props = defineProps({
   post: Object || null,

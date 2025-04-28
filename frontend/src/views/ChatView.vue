@@ -26,7 +26,7 @@
                                 <div class="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
                                     <p>{{ message.message }}</p>
                                 </div>
-                                <span class="text-xs text-gray-500 leading-none">{{ message.formatted_created_at}}</span>
+                                <span class="text-xs text-gray-500 leading-none">{{ timeAgo(message.created_at)}}</span>
                             </div>
                             <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                 <img :src="message.created_by.avatar" class="rounded-full w-[40px]"/>
@@ -64,6 +64,7 @@
 import { useUserStore } from '@/stores/user/user';
 import axios from 'axios';
 import { onMounted, ref, computed, onBeforeUnmount,reactive } from 'vue';
+import { timeAgo } from '@/utils/timeAgo';
 
 const chats = ref(null)
 

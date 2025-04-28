@@ -5,7 +5,7 @@
       id="dropdownNotificationButton"
       ref="trigger"
       @click="toggleDropdown"
-      class="relative inline-flex items-center text-sm font-medium text-center text-gray-800 transition delay-10 duration-300 ease-in-out hover:scale-110"
+      class="relative inline-flex items-center text-sm font-medium text-center"
       type="button"
     >
       <slot name="icon">
@@ -13,7 +13,7 @@
 
       <div
         v-if="showBadge"
-        class="absolute block w-3 h-3 bg-red-500 border-white rounded-full -top-0.5 start-2.5 dark:border-gray-900"
+        class="absolute block w-3 h-3 bg-red-500 border-stone-200 dark:border-stone-700 rounded-full -top-0.5 start-2.5"
       ></div>
     </button>
 
@@ -25,17 +25,17 @@
       leave-active-class="transition ease-in duration-150"
       leave-from-class="transform opacity-100 translate-y-0"
       leave-to-class="transform opacity-0 -translate-y-2"
-    >
+    >    
       <div
         v-show="isOpen"
         ref="dropdown"
         id="dropdownNotification"
-        class="absolute z-20 right-0 mt-2 w-full bg-white divide-y divide-gray-100 rounded-lg shadow-md"
+        class="absolute z-20 mt-2 left-1/2 transform -translate-x-1/2 w-full bg-stone-50 dark:bg-stone-900 divide-y divide-gray-100 rounded-lg shadow-md border border-stone-200 dark:border-stone-700"
         :class="dropdownClasses"
         :style="{ width: widthClass }"
       >
         <div
-          class="block px-4 py-2 text-center text-gray-100 rounded-t-lg bg-purple-500"
+          class="block px-4 py-2 text-center text-gray-100 rounded-t-lg bg-sky-500 dark:bg-stone-800"
         >
           <slot name="title">{{ title }}</slot>
         </div>
@@ -51,7 +51,7 @@
         <slot name="footer">
           <a
             href="#"
-            class="block py-2 text-sm font-medium text-center text-gray-800 rounded-b-lg bg-gray-50 color-transition hover:bg-gray-200"
+            class="block py-2 text-sm font-medium text-center text-stone-900 dark:text-stone-50 rounded-b-lg bg-stone-100 dark:bg-stone-700 color-transition hover:bg-stone-200 hover:dark:bg-stone-800"
           >
             <div class="inline-flex items-center">
               <Icon name="Eye"/>
