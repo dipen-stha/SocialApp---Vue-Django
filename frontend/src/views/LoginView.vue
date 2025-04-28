@@ -19,7 +19,7 @@
                 <div class="flex justify-center">
                   <input
                     type="text"
-                    class="px-2 py-1 border rounded-md shadow-md focus:outline-none w-full"
+                    class="input-field w-full"
                     placeholder="Enter Email"
                     v-model="loginPayload.email"
                   />
@@ -27,7 +27,7 @@
                 <div class="flex justify-center">
                   <input
                     type="password"
-                    class="px-2 py-1 border rounded-md shadow-md focus:outline-none w-full"
+                    class="input-field w-full"
                     placeholder="Enter Password"
                     v-model="loginPayload.password"
                   />
@@ -50,7 +50,7 @@
               <div class="w-full text-center">
                 <span
                   >New here? Sign up
-                  <a href="#" class="text-blue-500">here</a></span
+                  <RouterLink to="/signup" class="text-blue-500">here</RouterLink></span
                 >
               </div>
             </div>

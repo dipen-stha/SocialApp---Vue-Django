@@ -7,9 +7,24 @@
     @apply cursor-pointer transition delay-75 duration-300 ease-in-out;
   }
   .btn-primary {
-    @apply px-2 py-1 bg-purple-500 hover:bg-indigo-700 rounded-lg cursor-pointer;
+    @apply px-[15px] py-[5px] bg-purple-500 hover:bg-purple-700 rounded-md cursor-pointer transition delay-75 duration-300 ease-in-out text-white; 
+  }
+  .btn-lg-primary {
+    @apply px-3 py-2 bg-purple-500 hover:bg-purple-700 rounded-lg cursor-pointer transition delay-75 duration-300 ease-in-out text-white font-semibold;
+  }
+  .btn-secondary {
+    @apply px-[15px] py-[5px] bg-gray-500 hover:bg-gray-600 rounded-md cursor-pointer transition delay-75 duration-300 ease-in-out text-white;
+  }
+  .btn-lg-secondary {
+    @apply px-3 py-2 bg-gray-500 hover:bg-gray-600 rounded-lg cursor-pointer transition delay-75 duration-300 ease-in-out text-white font-semibold;
   }
   .avatar {
     @apply rounded-full h-10 w-10;
+  }
+  .error {
+    @apply text-sm text-red-500;
+  }
+  .input-field{
+    @apply p-2 border rounded-md shadow-md focus:outline-none focus:shadow-lg;
   }
 }

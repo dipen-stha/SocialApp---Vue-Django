@@ -1,114 +1,106 @@
 <template>
-    <div class="max-w-7xl mx-auto grid grid-cols-2 gap-4">
-        <div class="">
-            <div class="p-12 bg-white border-gray-200 rounded-lg">
-                <h1 class="mb-6 text-2xl">Signup</h1>
-
-                <p class="mb-6 text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi quidem et sequi in consectetur ea, eveniet repellendus. Minus, illo harum. Optio cum sunt ad molestiae eveniet veritatis quae inventore veniam.</p>
-
-                <p class="font-bold">
-                   Already have an account? <RouterLink to="/login" class="underline">Click Here</RouterLink>
-                </p>
+    <div class="bg-gray-200 h-screen">
+      <div class="h-screen flex justify-center items-center">
+        <div class="min-h-[500px] min-w-[400px] bg-white rounded-md shadow-lg">
+          <div class="text-center mt-[30px]">
+            <span class="text-xl font-semibold">Login</span>
+          </div>
+          <form class="mt-[15px]" @submit.prevent="onSignUp">
+            <div class="flex h-full justify-center items-center">
+              <div class="flex flex-col gap-y-[15px] w-[90%]">
+                <div
+                  class="flex flex-col gap-y-[10px] border border-gray-100 p-4 rounded-md"
+                >
+                  <div class="flex flex-col justify-center">
+                    <input
+                      type="text"
+                      class="input-field w-full"
+                      placeholder="Enter Email"
+                      v-model="signUpPayload.email"
+                    />
+                    <div v-if="signUpErrors?.email">
+                      <span class="error">{{ signUpErrors.email[0] }}</span>
+                    </div>
+                  </div>
+                  <div class="flex flex-col justify-center">
+                    <input
+                      type="text"
+                      class="input-field w-full"
+                      placeholder="Enter Name"
+                      v-model="signUpPayload.name"
+                    />
+                    <div v-if="signUpErrors?.name">
+                      <span class="error">{{ signUpErrors.name[0] }}</span>
+                    </div>
+                  </div>
+                  <div class="flex flex-col justify-center">
+                    <input
+                      type="password"
+                      class="input-field w-full"
+                      placeholder="Enter Password"
+                      v-model="signUpPayload.password"
+                    />
+                    <div v-if="signUpErrors?.password">
+                      <span class="error">{{ signUpErrors.password[0] }}</span>
+                    </div>
+                  </div>
+                  <div class="flex flex-col justify-center">
+                    <input
+                      type="password"
+                      class="input-field w-full"
+                      placeholder="Repeat Password"
+                      v-model="signUpPayload.repeat_password"
+                    />
+                    <div v-if="signUpErrors?.repeat_password">
+                      <span class="error">{{ signUpErrors.repeat_password[0] }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <button
+                    type="submit"
+                    class="w-full bg-slate-500 p-2 rounded-md text-white"
+                  >
+                    Sign Up
+                  </button>
+                </div>
+                <div class="w-full text-center">
+                  <span
+                    >Forgot your password?
+                    <a href="#" class="text-blue-500">Click Here</a></span
+                  >
+                </div>
+                <div class="w-full text-center">
+                  <span
+                    >New here? Sign up
+                    <RouterLink to="/signup" class="text-blue-500">here</RouterLink></span
+                  >
+                </div>
+              </div>
             </div>
+          </form>
         </div>
-        <div class="">
-            <div class="p-12 bg-white border-gray-200 rounded-lg">
-                <form class="space-y-6"  @submit.prevent="submitForm">
-                    <div>
-                        <label>Email</label><br/>
-                        <input type="text" placeholder="Your e-mail address" class="border border-gray-200 rounded-lg px-3 py-1 shadow-md focus:shadow-lg focus:outline-none w-full mt-4" v-model="form.email"/>
-                    </div>
-                    <div>
-                        <label>Name</label><br/>
-                        <input type="text" placeholder="Your full name" class="border border-gray-200 rounded-lg px-3 py-1 shadow-md focus:shadow-lg focus:outline-none w-full mt-4" v-model="form.name"/>
-                    </div>
-                    <div>
-                        <label>Password</label><br/>
-                        <input type="password" placeholder="Password" class="border border-gray-200 rounded-lg px-3 py-1 shadow-md focus:shadow-lg focus:outline-none w-full mt-4" v-model="form.password"/>
-                    </div>
-                    <div>
-                        <label>Repeat Password</label><br/>
-                        <input type="password" placeholder="Repeat Password" class="border border-gray-200 rounded-lg px-3 py-1 shadow-md focus:shadow-lg focus:outline-none w-full mt-4" v-model="form.password2"/>
-                    </div>
-                    <template v-if="form.errors">
-                        <div class="bg-red-300 text-white rounded-lg"></div>
-                        <span v-for="error in form.errors" :key="error">{{ error }}</span>
-                    </template>
-                    <div>
-                        <button type="submit" class="w-full bg-purple-500 py-2 rounded-lg text-white text-xl mt-4 hover:bg-purple-700">Signup</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+      </div>
     </div>
-</template>
+  </template>
+  
+  <script setup>
+  import { useUserStore } from "@/stores/user/user";
+  import { useAuthStore } from "@/stores/user/auth";
+  import { ref, onUnmounted } from "vue";
+  import { storeToRefs } from "pinia";
+  
+  const authStore = useAuthStore();
+  const userStore = useUserStore();
+  
+  const { signUpPayload, signUpErrors } = storeToRefs(authStore);
+  
+  const onSignUp = async () => {
+    await authStore.userSignUp();
+  };
 
-<script setup>
-import { useToastStore } from '@/stores/toast';
-import axios from 'axios';
-import { reactive } from 'vue';
-import { useRouter } from 'vue-router';
-
-const router = useRouter()
-
-const toastStore = useToastStore()
-
-const form = reactive({
-        email: '',
-        name: '',
-        password: '',
-        password2: '',
-})
-
-const errors = reactive({
-    name: null,
-    email: null,
-    password: null,
-    password2: null
-})
-
-const submitForm = () => {
-    let isValid = true;
-
-    Object.keys(errors).forEach(key => {
-        errors[key] = null
-    })
-
-    if(form.name === '') {
-        errors.name = 'Your name is missing'
-        isValid = false
-    }
-
-    if(form.password === '') {
-        errors.password = 'Your password is missing'
-        isValid = false
-    }
-
-    if(form.password !== form.password2) {
-        errors.password2 = "Your passwords don't match"
-        errors.password = "Your passwords don't match"
-        isValid = false
-    }
-
-    console.log(errors)
-    if(isValid) {
-        axios
-        .post('/api/account/signup/', form)
-        .then((response) => {
-            console.log(response.data)
-            if(response.data) {
-                toastStore.showToast(5000, "You have successfully registered.", 'bg-emerald-400')
-                router.push('/login')
-            } else {
-                toastStore.showToast(5000, "Something went wrong! Please try again", "bg-red-400")
-                
-                form.password = ''
-                form.password2 = ''
-            }
-        })
-        .catch(error => {
-            console.log('error', error)
-        })
-    }
-}
-</script>
+  onUnmounted(async () => {
+    authStore.$dispose
+  });
+  </script>
+  

@@ -1,5 +1,5 @@
 from posts.models import Post
-from account.models import FriendRequests
+from friends.models import FriendRequests
 from .models import Notification
 
 def create_notification(request, type, post_id=None, friendrequest_id=None):

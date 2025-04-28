@@ -4,7 +4,7 @@
         <div class="my-4">
             <ul>
                 <li class="mb-4"
-                v-for="user,index in users" :key="index">
+                v-for="user,index in userRecommendations" :key="index">
                     <div class="flex justify-between items-center space-x-2">
                         <img :src="user.avatar"
                             class="rounded-full h-10 w-10" />
@@ -21,35 +21,18 @@
 
 <script setup>
 import apiClient from "@/api/client";
+import { useUserStore } from "@/stores/user/user";
+import { storeToRefs } from "pinia";
 import { onMounted, ref } from 'vue';
 
 const users = ref([])
 
+const userStore = useUserStore();
+
+const { userRecommendations } = storeToRefs(userStore);
+
 onMounted(() => {
-    userRecommendations()
+    userStore.fetchUserRecommendations();
 })
-
-// const userRecommendations = async() => {
-//     await axios
-//     .get(`/api/user/?type=recommendations`)
-//     .then(response => {
-//         users.value = response.data
-//     })
-//     .catch(error => {
-//         console.log(error)
-//     })
-// }
-
-const userRecommendations = async() => {
-    try{
-        const response = apiClient.get(`/api/account/user/?type=recommendations`)
-        if (response.data) {
-            users.value = response.data
-        }
-    } catch(error) {
-        console.log(error)
-    }
-}
-
 
 </script>

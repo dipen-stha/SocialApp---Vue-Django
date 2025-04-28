@@ -54,12 +54,14 @@ INSTALLED_APPS = [
     'corsheaders',
     'debug_toolbar',
     'drf_spectacular',
+    'django_filters',
     
     'account',
     'posts',
     'chat',
     'notification',
     'commons',
+    'friends',
 ]
 
 REST_FRAMEWORK = {
@@ -151,7 +153,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

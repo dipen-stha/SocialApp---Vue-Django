@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import apiClient from "@/api/client";
-import { authAPI } from "@/core/endpoints";
+import { authAPI, userAPI } from "@/core/endpoints";
 
 export const useUserStore = defineStore("user", () => {
   
@@ -11,15 +11,16 @@ export const useUserStore = defineStore("user", () => {
     name: ref(null),
     email: ref(null),
   });
+  const userRecommendations = ref([])
 
   const fetchUserDetail = async () => {
     try {
       const response = await apiClient.get(authAPI.self);
       if (response.data) {
         isAuthenticated.value = true;
-        user.id = response.data[0].id;
-        user.name = response.data[0].name;
-        user.email = response.data[0].email;
+        user.id = response.data.id;
+        user.name = response.data.name;
+        user.email = response.data.email;
       }
     } catch (error) {
       user.isAuthenticated = false;
@@ -27,9 +28,24 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
+  const fetchUserRecommendations = async() => {
+    try{
+      const response = await apiClient.get(userAPI.userList, {
+        params: {
+          type: 'recommendations'
+        }
+      })
+      userRecommendations.value = response.data
+    } catch (error){
+
+    }
+  }
+
   return {
     isAuthenticated,
     user,
+    userRecommendations,
     fetchUserDetail,
+    fetchUserRecommendations
   };
 });

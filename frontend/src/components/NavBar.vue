@@ -7,16 +7,18 @@
         </div>
         <div v-if="isAuthenticated" class="menu-center flex space-x-12">
           <RouterLink to="/feed" class="text-purple-700 hover:text-purple-500">
-            <Icon name="House" />
+            <div class="transition delay-10 duration-300 ease-in-out hover:scale-110">
+              <Icon name="House" />
+            </div>
           </RouterLink>
           <div>
-            <Dropdown width="full">
+            <Dropdown title="Chats" width="lg">
               <template #icon>
                 <Icon name="MessageCircle"/>
               </template>
               <template #body>
-                <ul>
-                  <li v-for="chat in chatStore.chatList">
+                <div v-if="chatList" class="flex flex-col">
+                  <div v-for="chat in chatList">
                     <div class="p-2 border-b color-transition hover:bg-gray-100" :class="chat.is_read ? '' : 'bg-gray-50'">
                       <div class="flex gap-x-[5px] items-center">
                         <img :src="getUser(chat).avatar" class="avatar"/>
@@ -24,7 +26,25 @@
                         <span class="ml-auto text-sm text-gray-600">{{ chat.formatted_created_at }}</span>
                     </div>
                     </div>
-
+                  </div>
+                </div>
+                <div v-else>
+                  <span clsas="text-lg font-semibold">No Notifications</span>
+                </div>
+              </template>
+            </Dropdown>
+          </div>
+          <div>
+            <Dropdown width="lg">
+              <template #icon>
+                <Icon name="Bell" />
+              </template>
+              <template #body>
+                <ul>
+                  <li v-for="notification in notificationList">
+                    <div class="flex gap-x-[5px] items-center">
+                      <img class="avatar"/>
+                    </div>
                   </li>
                 </ul>
               </template>
@@ -96,49 +116,36 @@ import Dropdown from "./Dropdown.vue";
 import { storeToRefs } from "pinia";
 import Icon from "./Icon.vue";
 import { useChatStore } from "@/stores/chat";
+import { useAuthStore } from "@/stores/user/auth";
+import { useNotificationStore } from "@/stores/notification";
 
 const userStore = useUserStore();
+const authStore = useAuthStore();
+const notificationStore = useNotificationStore();
+const chatStore = useChatStore();
 
 const router = useRouter();
 const { isAuthenticated } = storeToRefs(userStore);
+const { chatList } = storeToRefs(chatStore);
+const { notificationList, notificationStats } = storeToRefs(notificationStore)
+
 const userId = computed(() => userStore.user.id);
-const unreadNotification = ref(null);
-const notifications = ref(null);
-const chatStore = useChatStore();
 
 const logout = () => {
   
 };
+
+const getNotifications = () => {
+  notificationStore.fetchNotificationList();
+}
 
 const getUser = (chatObject) => {
   if(chatObject.created_by.id === userStore.user.id) return chatObject.sent_to
   return chatObject.created_by
 }
 
-const getNotificationCount = async () => {
-  try {
-    const response = await axios.get("/api/notification/get_count/");
-    if (response.data) {
-      unreadNotification.value = response.data.data.unread_notifications;
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 const getChats = async () => {
   await chatStore.fetchChatList();
-};
-
-const getNotifications = async () => {
-  try {
-    const response = await axios.get("api/notification/list_notifications/");
-    if (response.data) {
-      notifications.value = response.data;
-    }
-  } catch (error) {
-    console.log(error);
-  }
 };
 
 const notification = ref(null);
@@ -172,8 +179,7 @@ onBeforeUnmount(() => {
 
 onMounted(() => {
   connectSocket();
-  getNotificationCount();
-  getNotifications();
+  notificationStore.fetchNotificationStats()
   getChats();
 });
 </script>

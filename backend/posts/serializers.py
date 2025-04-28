@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
@@ -44,6 +45,7 @@ class PostSerializer(serializers.ModelSerializer):
     
 
 class LikeSerializer(serializers.ModelSerializer):
+    created_by = UserSerializer(fields=['id', 'name', 'avatar'], read_only=True)
 
     class Meta:
         model = Like
@@ -63,13 +65,13 @@ class LikeSerializer(serializers.ModelSerializer):
                 })
         return attrs
 
-    def create(self, validated_data):
-        validated_data['created_by'] = self.context['request'].user
-        instance, created = Like.objects.get_or_create(**validated_data)
-        if not created:
-            raise 
-        instance.save()
-        return instance
+    # def create(self, validated_data):
+    #     validated_data['created_by'] = self.context['request'].user
+    #     instance, created = Like.objects.get_or_create(**validated_data)
+    #     if not created:
+    #         raise IntegrityError
+    #     instance.save()
+    #     return instance
     
 
 class CommentSerializer(serializers.ModelSerializer):

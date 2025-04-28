@@ -1,4 +1,4 @@
-<script setup lang="ts">
+r<script setup lang="ts">
     import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
     import Trends from '@/components/Trends.vue';
     import { ref } from 'vue';

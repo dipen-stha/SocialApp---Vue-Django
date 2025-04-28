@@ -22,7 +22,7 @@ class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     body = models.TextField(blank=True, null=True)
 
-    attachments = models.ManyToManyField(PostAttachment,null=True,blank=True)
+    attachments = models.ManyToManyField(PostAttachment)
 
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)

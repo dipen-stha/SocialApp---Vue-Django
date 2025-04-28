@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.db.models import Prefetch, Q, F, Max
+from drf_spectacular.utils import extend_schema
 
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Conversation, ConversationMessage
@@ -21,19 +23,28 @@ class ConversationViewSet(ModelViewSet):
     #     convo = ConversationMessage.objects.filter(id__in=user_messages)
 
 
-
-class ConversationDetailViewSet(ModelViewSet):
+class ConversationListCreateAPI(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ConversationDetailSerializer
 
     def get_queryset(self):
-        return Conversation.objects.filter(users__in=[self.request.user.id,]).get(id=self.kwargs.get('pk'))
+        return Conversation.objects.filter(users__in=[self.request.user.id,])
 
 
-class ConversationMessageViewSet(ModelViewSet):
+class ConversationRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ConversationSerializer
+
+
+class ConversationMessageListCreate(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ConversationMessageSerializer
 
     def get_queryset(self):
         return ConversationMessage.objects.filter(conversation__users__in=[self.request.user]).select_related().prefetch_related('conversation__users')
+
+
+class ConversationMessageRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ConversationMessageSerializer
 

@@ -5,7 +5,7 @@
       id="dropdownNotificationButton"
       ref="trigger"
       @click="toggleDropdown"
-      class="relative inline-flex items-center text-sm font-medium text-center text-gray-800 transition delay-10 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
+      class="relative inline-flex items-center text-sm font-medium text-center text-gray-800 transition delay-10 duration-300 ease-in-out hover:scale-110"
       type="button"
     >
       <slot name="icon">
@@ -31,13 +31,13 @@
         ref="dropdown"
         id="dropdownNotification"
         class="absolute z-20 right-0 mt-2 w-full bg-white divide-y divide-gray-100 rounded-lg shadow-md"
-        :class="[widthClass, dropdownClasses]"
-        :style="{ minWidth: minWidth }"
+        :class="dropdownClasses"
+        :style="{ width: widthClass }"
       >
         <div
           class="block px-4 py-2 text-center text-gray-100 rounded-t-lg bg-purple-500"
         >
-          <slot name="header">Notifications</slot>
+          <slot name="title">{{ title }}</slot>
         </div>
 
         <div class="divide-y divide-gray-100 dark:divide-gray-700 max-h-96 overflow-y-auto">
@@ -69,6 +69,10 @@ import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import Icon from './Icon.vue'
 
 const props = defineProps({
+  title: {
+    type: String,
+    default: 'Notifications'
+  },
   showBadge: {
     type: Boolean,
     default: false
@@ -86,29 +90,24 @@ const props = defineProps({
     type: String,
     default: 'sm',
     validator: (value) => ['xs', 'sm', 'md', 'lg', 'xl', 'full', 'auto'].includes(value) || value.match(/^\d+(px|rem|em|%)?$/)
-  },
-  minWidth: {
-    type: String,
-    default: '300px'
   }
 })
 
 const widthClass = computed(() => {
   if (props.width.match(/^\d/)) {
-    return '' // We'll use inline style for custom widths
+    return ''
   }
-  
   const widthMap = {
-    xs: 'max-w-xs',  // 20rem (320px)
-    sm: 'max-w-sm',  // 24rem (384px)
-    md: 'max-w-md',  // 28rem (448px)
-    lg: 'max-w-lg',  // 32rem (512px)
-    xl: 'max-w-xl',  // 36rem (576px)
-    full: 'w-full',
-    auto: 'w-auto'
+    xs: '320px',  // 20rem (320px)
+    sm: '384px',  // 24rem (384px)
+    md: '448px',  // 28rem (448px)
+    lg: '512px',  // 32rem (512px)
+    xl: '576px',  // 36rem (576px)
+    full: '100%',
+    auto: 'auto'
   }
   
-  return widthMap[props.width] || 'max-w-sm'
+  return widthMap[props.width] || 'max-w-lg'
 })
 
 const isOpen = ref(false)
