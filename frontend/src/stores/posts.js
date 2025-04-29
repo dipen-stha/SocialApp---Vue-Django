@@ -2,6 +2,7 @@ import apiClient from "@/api/client";
 import { postAPI } from "@/core/endpoints";
 import { defineStore } from "pinia";
 import { reactive, ref } from "vue";
+import { toast } from "vue3-toastify";
 
 export const usePostStore = defineStore("post", () => {
     const postList = ref([]);
@@ -10,10 +11,19 @@ export const usePostStore = defineStore("post", () => {
         body: null,
         attachments: []
     });
+    const searchData = reactive({
+        users: [],
+        posts: []
+    });
     
-    const fetchPostList = async () => {
+    const fetchPostList = async (userId = null) => {
         try{
-            const response = await apiClient.get(postAPI.fetchPostList)
+            let params = userId ? {
+                user: userId
+            } : null
+            const response = await apiClient.get(postAPI.fetchPostList,{
+                    params
+            })
             postList.value = response.data
         } catch (error) {
 
@@ -70,15 +80,31 @@ export const usePostStore = defineStore("post", () => {
         }
     }
 
+    const searchPosts = async (query) => {
+        try{
+            const response = await apiClient.get(postAPI.search, {
+                params: {
+                    q: query
+                }
+            })
+            searchData.users = response.data.user
+            searchData.posts = response.data.posts
+        } catch (error) {
+            toast.error(error.response.data.message)
+        }
+    }
+
     return {
         postList,
         postDetail,
         postPayload,
+        searchData,
         fetchPostList,
         retrievePostDetail,
         createPost,
         updatePost,
         createComment,
         createLikes,
+        searchPosts
     }
 })

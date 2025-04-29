@@ -5,7 +5,7 @@ const initRouter = (app) => {
     const userStore = useUserStore();
     router.beforeEach(async (to, from, next) => {
         try{
-            await userStore.fetchUserDetail();
+            await userStore.fetchSelfDetail();
         } catch (error){
             console.log("Error fetching user detail", error)
         }

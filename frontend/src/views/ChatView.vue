@@ -83,7 +83,7 @@ const conversationDetails = reactive({
 
 let socket = null;
 
-const user = userStore.user
+const user = userStore.self
 
 const fetchChats = async () => {
     const response = await axios.get('api/chat/conversation/')

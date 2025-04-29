@@ -7,7 +7,8 @@ export const authAPI = {
 
 export const userAPI = {
     userList: "account/user/",
-    userDetail: (id) => `account/user/${id}`,
+    userDetail: (id) => `account/user/${id}/`,
+    userStats: (id) => `account/user/stats/${id}/`
 }
 
 export const chatAPI = {
@@ -26,4 +27,12 @@ export const postAPI = {
     postUpdate: (id) => `posts/${id}/`,
     addComment: (id) => `posts/${id}/add_comments/`,
     addLikes: (id) => `posts/${id}/add_likes/`,
+    search: 'posts/search/'
+}
+
+export const friendsAPI = {
+    friendsList: (id) => `friends/list/${id}`,
+    sendRequest: 'friends/friend-requests/',
+    updateRequest: (id) => `friends/friend-requests/${id}/`,
+    listRequests: 'friends/friend-requests/' 
 }

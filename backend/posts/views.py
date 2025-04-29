@@ -36,7 +36,7 @@ class PostViewSet(ModelViewSet):
         search_query = request.query_params.get('q', '')
 
         if not search_query:
-            return Response({'error': 'Nothing to search'})
+            return Response({'message': 'Nothing to search'}, status=status.HTTP_400_BAD_REQUEST)
         
         user_queryset = User.objects.filter(name__icontains=search_query
         ).annotate(

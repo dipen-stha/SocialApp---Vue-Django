@@ -12,11 +12,37 @@ export const useUserStore = defineStore("user", () => {
     email: null,
     avatar: null
   });
+  const self = reactive({
+    id: null,
+    name: null,
+    email: null,
+    avatar: null
+  });
   const userRecommendations = ref([])
+  const userStats = ref({
+    friends_count: null,
+    posts_count: null
+  });
 
-  const fetchUserDetail = async () => {
+  const fetchSelfDetail = async () => {
     try {
       const response = await apiClient.get(authAPI.self);
+      if (response.data) {
+        isAuthenticated.value = true;
+        self.id = response.data.id;
+        self.name = response.data.name;
+        self.email = response.data.email;
+        self.avatar = response.data.avatar;
+      }
+    } catch (error) {
+      isAuthenticated = false;
+      throw error;
+    }
+  };
+
+  const fetchUserDetail = async (id) => {
+    try {
+      const response = await apiClient.get(userAPI.userDetail(id));
       if (response.data) {
         isAuthenticated.value = true;
         user.id = response.data.id;
@@ -25,7 +51,7 @@ export const useUserStore = defineStore("user", () => {
         user.avatar = response.data.avatar;
       }
     } catch (error) {
-      user.isAuthenticated = false;
+      isAuthenticated = false;
       throw error;
     }
   };
@@ -43,11 +69,25 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
+  const fetchUserStats = async (id) => {
+    try {
+      const response = await apiClient.get(userAPI.userStats(id))
+      userStats.value.friends_count = response.data.friends_count
+      userStats.value.posts_count = response.data.posts_count
+    } catch (error){
+
+    }
+  }
+
   return {
     isAuthenticated,
     user,
+    self,
     userRecommendations,
+    userStats,
     fetchUserDetail,
-    fetchUserRecommendations
+    fetchUserRecommendations,
+    fetchSelfDetail,
+    fetchUserStats
   };
 });

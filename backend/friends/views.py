@@ -34,7 +34,7 @@ class FriendRequestsViewSet(ModelViewSet):
         return Response(serializer.data)
 
 
-class FriendsViewSet(ListAPIView):
+class FriendsListAPI(ListAPIView):
     serializer_class = FriendSerializer
     permission_classes = [IsAuthenticated]
     queryset = Friend.objects.select_related('user', 'friend')

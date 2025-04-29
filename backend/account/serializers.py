@@ -67,3 +67,12 @@ class UserSearchSerializer(ModelSerializer):
 
     def get_friends_count(self, instance):
         return instance.friends.count()
+
+
+class UserStatsSerializer(serializers.ModelSerializer):
+    friends_count = serializers.CharField()
+    posts_count = serializers.CharField()
+
+    class Meta:
+        model = User
+        fields = ['friends_count', 'posts_count']

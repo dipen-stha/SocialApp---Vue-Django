@@ -70,7 +70,7 @@
           <div id="profileDropdown" class="relative">
             <div @click.stop="toggleDropdown">
               <img
-                :src="userStore.user.avatar"
+                :src="userStore.self.avatar"
                 class="rounded-full h-10 w-10 transition delay-25 duration-300 ease-in-out hover:scale-125 cursor-pointer hover:shadow-md"
               />
             </div>
@@ -133,7 +133,7 @@ const { isAuthenticated } = storeToRefs(userStore);
 const { chatList } = storeToRefs(chatStore);
 const { notificationList, notificationStats } = storeToRefs(notificationStore);
 
-const userId = computed(() => userStore.user.id);
+const userId = computed(() => userStore.self.id);
 
 const showDropdown = ref(false)
 const trigger =ref(null)
@@ -175,7 +175,7 @@ const getNotifications = () => {
 };
 
 const getUser = (chatObject) => {
-  if (chatObject.created_by.id === userStore.user.id) return chatObject.sent_to;
+  if (chatObject.created_by.id === userStore.self.id) return chatObject.sent_to;
   return chatObject.created_by;
 };
 
