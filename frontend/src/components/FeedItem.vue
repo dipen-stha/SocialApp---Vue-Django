@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 mb-6 rounded">
+  <div class="p-4 primary-background primary-border mb-6 rounded">
     <div class="flex justify-between mb-6 items-center">
       <div class="flex items-center space-x-4">
         <img :src="post.created_by.avatar" class="rounded-full h-10 w-10" />
@@ -7,7 +7,7 @@
           <strong>{{ post.created_by.name }}</strong>
         </p>
       </div>
-      <div class="text-stone-900 dark:text-stone-50 text-xs">
+      <div class="primary-text text-xs">
         {{ timeAgo(post.created_at) }}
       </div>
     </div>
@@ -17,7 +17,7 @@
     </div>
     <div v-else class="py-2">
       <p>{{ post.body }}</p>
-      <p class="text-stone-900 dark:text-stone-50 text-xs">#asdas #asdasd</p>
+      <p class="primary-text text-xs">#asdas #asdasd</p>
     </div>
     <div class="my-6 flex justify-between">
       <div class="flex space-x-6">
@@ -28,7 +28,7 @@
           >
             <Icon name="Heart" />
           </button>
-          <span class="text-stone-900 dark:text-stone-50 text-xs"
+          <span class="primary-text text-xs"
             >{{ post.likes_count }} likes</span
           >
         </div>
@@ -39,7 +39,7 @@
           >
             <Icon name="MessageSquareMore" />
           </button>
-          <span class="text-stone-900 dark:text-stone-50 text-xs"
+          <span class="primary-text text-xs"
             >{{ post.comments_count }} comments</span
           >
         </div>
@@ -74,11 +74,8 @@
 </template>
 
 <script setup>
-import axios from "axios";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import BaseModal from "./BaseModal.vue";
-import PostDetail from "./PostDetail.vue";
-import { toggleBodyScroll } from "@/utils/scroll";
 import Icon from "./Icon.vue";
 import { usePostStore } from "@/stores/posts";
 import { timeAgo } from "@/utils/timeAgo";

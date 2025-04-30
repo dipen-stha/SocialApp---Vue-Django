@@ -1,5 +1,5 @@
 <template>
-  <nav class="py-10 px-8 border-b border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900">
+  <nav class="py-10 px-8 border-b border-stone-200 dark:border-stone-700 primary-background">
     <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between">
         <div class="menu-left">

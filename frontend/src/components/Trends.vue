@@ -1,5 +1,5 @@
 <template>
-    <div class="p-4 mb-6 rounded-lg border border-stone-200 dark:border-stone-700">
+    <div class="p-4 mb-6 rounded-lg primary-border">
         <p class="text-xl font-semibold">Trends</p>
         <div>
             <ul>

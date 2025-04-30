@@ -2,22 +2,22 @@
   <div v-if="user" class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
     <div class="main-left col-span-1">
       <div
-        class="p-4 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-center"
+        class="p-4 primary-background primary-border rounded-lg text-center"
       >
         <img :src="user.avatar" class="rounded-full m-auto w-15 h-15" />
         <p class="mt-4 text-xl font-semibold">{{ user.name }}</p>
         <p>{{ user.email }}</p>
         <div class="mt-6 flex space-x-8 justify-around">
           <RouterLink :to="{ name: 'friends', params: { id: user.id } }">
-            <p class="text-xs text-stone-900 dark:text-stone-50">
+            <p class="text-xs primary-text">
               {{ userStats?.friends_count }} friends
             </p>
           </RouterLink>
-          <p class="text-xs text-stone-900 dark:text-stone-50">
+          <p class="text-xs primary-text">
             {{ userStats?.posts_count }} posts
           </p>
         </div>
-        <div v-if="userStore.user?.id !== route.params.id" class="">
+        <div v-if="userStore.self?.id !== route.params.id" class="">
           <div
             v-if="relationshipState === 'friends'"
             class="flex flex-wrap gap-y-2"
@@ -95,28 +95,15 @@
               </span>
             </button>
           </div>
-          <div v-else-if="relationshipState === 'not_friends'" class="">
+          <div v-else-if="relationshipState === 'not_friends'" class="flex mt-3 items-center justify-center px-[30px]">
             <button
               @click="sendRequest"
-              class="bg-purple-500 hover:bg-purple-700 px-3 py-2 rounded-lg mt-4 w-full text-white"
+              class="btn-primary w-full"
             >
-              <span class="flex space-x-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
-                  />
-                </svg>
-                <p>Add Friend</p>
-              </span>
+              <div class="flex justify-center items-center space-x-4">
+                <Icon name="UserPlus" />
+                  <p class="text-center">Add Friend</p>
+              </div>
             </button>
           </div>
           <div
@@ -172,7 +159,10 @@
       </div>
     </div>
     <div class="main-middle col-span-2 space-y-4">
-      <div v-if="userStore.user.id === userStore.self.id" class="p-4 border border-stone-200 dark:border-stone-700 rounded">
+      <div
+        v-if="userStore.user.id === userStore.self.id"
+        class="p-4 border border-stone-200 dark:border-stone-700 rounded"
+      >
         <form @submit.prevent="handleSubmit">
           <div class="p-4">
             <textarea
@@ -204,6 +194,7 @@
 
 <script setup lang="ts">
 import FeedItem from "@/components/FeedItem.vue";
+import Icon from "@/components/Icon.vue";
 import PeopleYouMayKnow from "@/components/PeopleYouMayKnow.vue";
 import Trends from "@/components/Trends.vue";
 import { useFriendStore } from "@/stores/friends";
@@ -216,10 +207,12 @@ import { useRoute } from "vue-router";
 
 onMounted(() => {
   if (route.params.id) {
-    userStore.fetchUserDetail(route?.params?.id);
-    userStore.fetchUserStats(route.params.id)
-    postStore.fetchPostList(route.params.id)
-    // determineRelationshipState();
+    userStore.fetchUserDetail(route.params.id);
+    userStore.fetchUserStats(route.params.id);
+    postStore.fetchPostList(route.params.id);
+    friendStore.fetchFriends(route.params.id);
+    friendStore.fetchFriendRequest();
+    determineRelationshipState();
   }
 });
 
@@ -233,6 +226,7 @@ const friendStore = useFriendStore();
 
 const { user, userStats } = storeToRefs(userStore);
 const { postList } = storeToRefs(postStore);
+const { friendsList, friendsRequestsList } = storeToRefs(friendStore);
 
 const content = reactive({
   body: "",
@@ -254,24 +248,20 @@ const handleSubmit = async () => {
   });
 };
 
-const determineRelationshipState = async () => {
+const determineRelationshipState = () => {
   try {
-
-    const friendRequestResponse = await axios.get("/api/friend-requests/");
-    const requests = friendRequestResponse.data;
-
     const currentUserId = userStore.user.id;
-    const sentRequest = requests.find(
+    const sentRequest = friendsRequestsList.value.find(
       (item) =>
         item.created_for.id === route.params.id &&
         item.created_by.id === currentUserId
     );
-    const receivedRequest = requests.find(
+    const receivedRequest = friendsRequestsList.value.find(
       (item) =>
         item.created_by.id === route.params.id &&
         item.created_for.id === currentUserId
     );
-    if (user.value.friends.find((item) => item.friend === currentUserId)) {
+    if (friendsList.value.find((item) => item.friend === currentUserId)) {
       relationshipState.value = "friends";
       isFriend.value = true;
     } else if (sentRequest) {
@@ -289,8 +279,8 @@ const determineRelationshipState = async () => {
   }
 };
 
-const sendRequest = async (id: string) => {
-  friendStore.sendFriendRequest(id);
+const sendRequest = async () => {
+  friendStore.sendFriendRequest(route.params.id);
 };
 
 const handleRequest = async (status: string) => {

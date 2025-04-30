@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto grid grid-cols-5 gap-4">
     <div class="main-middle col-span-3 space-y-4">
-      <div class="p-4 border border-stone-200 dark:border-stone-700 rounded">
+      <div class="p-4 primary-border rounded">
         <form @submit.prevent="handleSubmit">
           <div class="p-4">
             <textarea

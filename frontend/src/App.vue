@@ -1,6 +1,6 @@
 <template>
-  <div class="fixed inset-0 bg-stone-50 dark:bg-stone-900 -z-10"></div>
-  <div class="relative text-stone-900 dark:text-stone-50">
+  <div class="fixed inset-0 primary-background -z-10"></div>
+  <div class="relative primary-text">
     <RouterView />
   </div>
 </template>

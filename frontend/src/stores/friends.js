@@ -10,7 +10,7 @@ export const useFriendStore = defineStore("friend", () => {
 
     const fetchFriends = async (id) => {
         try {
-            const response = await apiClient.get(freinds.friendsList(id))
+            const response = await apiClient.get(friendsAPI.friendsList(id))
             friendsList.value = response.data
         } catch (error){
 
