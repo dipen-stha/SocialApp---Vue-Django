@@ -47,11 +47,12 @@ class UserSignUpSerializer(ModelSerializer):
 
 class UserSerializer(DynamicFieldsModelSerializer):
     friends_count = serializers.SerializerMethodField()
+    is_friend = serializers.BooleanField(default=False)
     # friends = FriendListSerializer(many=True)
 
     class Meta:
         model = User
-        fields = ['id','email', 'name', 'avatar', 'is_staff', 'is_active', 'is_superuser', 'last_login', 'friends_count']
+        fields = ['id','email', 'name', 'avatar', 'is_staff', 'is_active', 'is_superuser', 'last_login', 'friends_count', 'is_friend']
 
     def get_friends_count(self, instance) -> int:
         return instance.friends.count()

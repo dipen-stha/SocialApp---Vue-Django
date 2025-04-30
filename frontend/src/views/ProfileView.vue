@@ -17,55 +17,29 @@
             {{ userStats?.posts_count }} posts
           </p>
         </div>
-        <div v-if="userStore.self?.id !== route.params.id" class="">
+        <div v-if="self?.id !== route.params.id" class="">
           <div
             v-if="relationshipState === 'friends'"
             class="flex flex-wrap gap-y-2"
           >
             <button
-              class="bg-sky-500 hover:bg-sky-600 px-2 py-2 rounded-lg mt-4 text-white w-1/2"
+              class="btn-primary mt-4 text-white w-1/2"
             >
-              <span class="flex space-x-2 text-xs">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="m4.5 12.75 6 6 9-13.5"
-                  />
-                </svg>
+              <span class="flex space-x-2 text-xs color-transition">
+                <Icon name="Users" :stroke-width="2" :size="16"/>
                 <p>Friends</p>
               </span>
             </button>
             <button
-              class="bg-red-500 hover:bg-red-600 px-2 py-2 rounded-lg mt-4 text-white w-1/2"
+              class="bg-red-500 hover:bg-red-600 px-2 py-2 rounded-md mt-4 text-white w-1/2 color-transition"
             >
               <span class="flex space-x-2 text-xs">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
-                  />
-                </svg>
+                <Icon name="UserRoundMinus" :stroke-width="2" :size="16"/>
                 <p>Unfriend</p>
               </span>
             </button>
             <button
-              class="py-1 px-2 bg-blue-500 hover:bg-blue-700 w-full rounded-lg"
+              class="py-1 px-2 bg-blue-500 hover:bg-blue-700 w-full rounded-lg color-transition"
             >
               <span class="text-white"> Message </span>
             </button>
@@ -77,32 +51,19 @@
               class="bg-gray-500 hover:bg-gray-700 px-3 py-2 rounded-lg mt-4 w-full text-white"
             >
               <span class="flex space-x-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
-                  />
-                </svg>
+                <Icon name="UserRoundCheck" class=""/>
                 <p>Request Sent</p>
               </span>
             </button>
           </div>
-          <div v-else-if="relationshipState === 'not_friends'" class="flex mt-3 items-center justify-center px-[30px]">
+          <div v-else-if="relationshipState === 'not_friends'" class="flex mt-3 items-center lg:px-[30px] md:px-[5px]">
             <button
               @click="sendRequest"
               class="btn-primary w-full"
             >
-              <div class="flex justify-center items-center space-x-4">
+              <div class="flex justify-center items-center space-x-[10px]">
                 <Icon name="UserPlus" />
-                  <p class="text-center">Add Friend</p>
+                  <p class="text-center hidden md:block">Add Friend</p>
               </div>
             </button>
           </div>
@@ -111,46 +72,20 @@
             class="flex space-x-2 justify-center text-center"
           >
             <button
-              class="bg-sky-500 hover:bg-sky-600 px-2 py-2 rounded-lg mt-4 text-white w-1/2"
+              class="bg-sky-500 hover:bg-sky-600 px-2 py-2 rounded-lg mt-4 text-white w-1/2 transition duration-200 ease-in"
               @click="handleRequest('accepted')"
             >
-              <span class="flex space-x-2 text-xs">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="m4.5 12.75 6 6 9-13.5"
-                  />
-                </svg>
+              <span class="flex justify-center items-center space-x-2 text-xs">
+                <Icon name="Check" :stroke-width="2" :size="16"/>
                 <p class="hidden md:block">Accept</p>
               </span>
             </button>
             <button
-              class="bg-red-500 hover:bg-red-600 px-2 py-2 rounded-lg mt-4 text-white w-1/2 text-center"
+              class="bg-red-500 hover:bg-red-600 px-2 py-2 rounded-lg mt-4 text-white w-1/2 text-center transition duration-200 ease-in"
               @click="handleRequest('rejected')"
             >
-              <span class="flex space-x-2 text-xs text-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="size-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
-                  />
-                </svg>
+              <span class="flex justify-center items-center space-x-2 text-xs text-center">
+                <Icon name="Ban" class="text-xs" :stroke-width="2" :size="16"/>
                 <p class="hidden md:block">Reject</p>
               </span>
             </button>
@@ -160,7 +95,7 @@
     </div>
     <div class="main-middle col-span-2 space-y-4">
       <div
-        v-if="userStore.user.id === userStore.self.id"
+        v-if="userStore.user.id === self.id"
         class="p-4 border border-stone-200 dark:border-stone-700 rounded"
       >
         <form @submit.prevent="handleSubmit">
@@ -202,15 +137,19 @@ import { usePostStore } from "@/stores/posts";
 import { useUserStore } from "@/stores/user/user";
 import axios from "axios";
 import { storeToRefs } from "pinia";
-import { onMounted, ref, reactive, watch } from "vue";
-import { useRoute } from "vue-router";
+import { onMounted, ref, reactive, watch, onUnmounted } from "vue";
+import { onBeforeRouteLeave, useRoute } from "vue-router";
+
+const userStore = useUserStore();
+const postStore = usePostStore();
+const friendStore = useFriendStore();
 
 onMounted(() => {
   if (route.params.id) {
     userStore.fetchUserDetail(route.params.id);
     userStore.fetchUserStats(route.params.id);
     postStore.fetchPostList(route.params.id);
-    friendStore.fetchFriends(route.params.id);
+    friendStore.fetchFriends(self.value.id);
     friendStore.fetchFriendRequest();
     determineRelationshipState();
   }
@@ -220,11 +159,7 @@ const posts = ref([]);
 
 const route = useRoute();
 
-const userStore = useUserStore();
-const postStore = usePostStore();
-const friendStore = useFriendStore();
-
-const { user, userStats } = storeToRefs(userStore);
+const { self, user, userStats } = storeToRefs(userStore);
 const { postList } = storeToRefs(postStore);
 const { friendsList, friendsRequestsList } = storeToRefs(friendStore);
 
@@ -249,8 +184,9 @@ const handleSubmit = async () => {
 };
 
 const determineRelationshipState = () => {
+  if(!friendsRequestsList.value || friendsRequestsList.value.length === 0) return;
   try {
-    const currentUserId = userStore.user.id;
+    const currentUserId = self.value.id;
     const sentRequest = friendsRequestsList.value.find(
       (item) =>
         item.created_for.id === route.params.id &&
@@ -261,7 +197,11 @@ const determineRelationshipState = () => {
         item.created_by.id === route.params.id &&
         item.created_for.id === currentUserId
     );
-    if (friendsList.value.find((item) => item.friend === currentUserId)) {
+    if (friendsRequestsList.value.find(
+      (item) => 
+      item.created_for.id === currentUserId ||
+      item.created_by.id === currentUserId &&
+      item.status === 'accepted')) {
       relationshipState.value = "friends";
       isFriend.value = true;
     } else if (sentRequest) {
@@ -285,7 +225,7 @@ const sendRequest = async () => {
 
 const handleRequest = async (status: string) => {
   try {
-    friendStore.udpateFriendRequest(friendRequest.value.id);
+    friendStore.udpateFriendRequest(friendRequest.value.id, status);
     if (status === "accepted") {
       relationshipState.value = "friends";
       isFriend.value = true;
@@ -305,4 +245,19 @@ watch(
     determineRelationshipState();
   }
 );
+
+watch(
+  () => friendsRequestsList.value,
+  (newVal) => {
+    if(newVal && newVal.length > 0){
+      determineRelationshipState();
+    }
+  }
+)
+
+onBeforeRouteLeave(() => {
+  userStore.$reset();
+  postStore.$reset();
+  friendStore.$reset();
+})
 </script>

@@ -15,19 +15,21 @@ from .serializers import FriendSerializer, FriendRequestsSerializer
 class FriendRequestsViewSet(ModelViewSet):
     serializer_class = FriendRequestsSerializer
     permission_classes = [IsAuthenticated]
+    queryset = FriendRequests.objects.all()
 
     def get_queryset(self):
-        return FriendRequests.objects.filter(
-            Q(created_for=self.request.user) | Q(created_by=self.request.user)).select_related('created_for',
+        return self.queryset.filter(
+            Q(created_for=self.request.user) |
+            Q(created_by=self.request.user)).select_related('created_for',
                                                                                                'created_by')
 
     def update(self, request, *args, **kwargs):
-        with transaction.atomic():
-            instance = self.get_object()
-            serializer = self.serializer_class(instance, data=request.data, context={"request": request}, partial=True)
-            serializer.is_valid(raise_exception=True)
-            self.perform_update(serializer)
-            if instance.status == 'accepted':
+        instance = self.get_object()
+        serializer = self.serializer_class(instance, data=request.data, context={"request": request}, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        if instance.status == 'accepted':
+            with transaction.atomic():
                 Friend.objects.create(user=instance.created_for, friend=instance.created_by)
                 Friend.objects.create(user=instance.created_by, friend=instance.created_for)
 

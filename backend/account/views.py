@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Prefetch, Q
+from django.db.models import Count, Prefetch, Q, Case, When
 from django.db import transaction
 
 from rest_framework import status
@@ -54,8 +54,16 @@ class UserViewSet(ModelViewSet):
 
     def get_queryset(self):
         if self.request.GET.get('type') == 'recommendations':
-            return self.queryset.exclude(id=self.request.user.id).annotate(post_count=Count('posts')).order_by('-post_count').prefetch_related('friends').distinct()[:4]
-        return self.queryset
+            return self.queryset.exclude(
+                id=self.request.user.id
+            ).annotate(
+                post_count=Count('posts')).order_by('-post_count').prefetch_related('friends').distinct()[:4]
+        return self.queryset.annotate(
+            is_friend=Case(
+                When(
+                    id__in=self.request.user.friends.values_list('id'),
+                then=True),default=False)
+        )
 
 
 class UserStatsAPI(APIView):

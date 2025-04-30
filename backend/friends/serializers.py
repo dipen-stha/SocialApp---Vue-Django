@@ -17,20 +17,22 @@ class FriendListSerializer(ModelSerializer):
 
 
 class FriendRequestsSerializer(ModelSerializer):
+    created_by = UserSerializer(fields=['id', 'avatar'], read_only=True)
+
     class Meta:
         model = FriendRequests
         fields = ['id', 'created_for', 'status', 'created_at', 'created_by']
 
     def get_fields(self):
         fields = super().get_fields()
-        if self.context['request'] and self.context['request'].data:
-            fields['created_for'] = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), write_only=True)
+        if self.context['request'] and self.context['request'].method == "GET":
+            fields['created_for'] = UserSerializer(fields=['id', 'avatar'], read_only=True)
         return fields
 
     def create(self, validated_data):
         request = self.context['request']
         validated_data['created_by'] = request.user
-        instance = FriendRequests.objects.get_or_create(**validated_data)
+        instance, _ = FriendRequests.objects.get_or_create(**validated_data)
         return instance
 
     def validate_status(self, value):

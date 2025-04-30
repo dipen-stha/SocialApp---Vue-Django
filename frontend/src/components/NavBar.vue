@@ -144,7 +144,7 @@ const toggleDropdown = () => {
 }
 
 const logout = () => {
-  authStore.logout();
+  authStore.userLogout();
   showDropdown.value = false
 }
 

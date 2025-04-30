@@ -1,7 +1,7 @@
 <template>
     <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
         <div class="main-left col-span-1">
-            <div class="bg-white p-4 mb-6 rounded border border-gray-200">
+            <div class="primary-background p-4 mb-6 rounded border primary-border">
                 <div class="my-4">
                     <ul>
                         <li v-for="chat in chats" :key="chat.id" class="mb-4">

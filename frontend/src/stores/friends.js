@@ -19,8 +19,8 @@ export const useFriendStore = defineStore("friend", () => {
 
     const fetchFriendRequest = async () => {
         try{
-            const response = await apiClient.get(friendsAPI.friendsList)
-            friendsList.value = response.data
+            const response = await apiClient.get(friendsAPI.listRequests)
+            friendsRequestsList.value = response.data
         } catch (error) {
 
         }
@@ -41,7 +41,7 @@ export const useFriendStore = defineStore("friend", () => {
 
     const udpateFriendRequest = async (id, status) => {
         try {
-            const response = await apiClient.post(friendsAPI.updateRequest(id), {
+            const response = await apiClient.put(friendsAPI.updateRequest(id), {
                 status: status
             })
         } catch (error) {

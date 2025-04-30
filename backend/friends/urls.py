@@ -10,3 +10,5 @@ router.register(r'friend-requests', FriendRequestsViewSet, basename='friends_req
 urlpatterns = [
     path('list/<str:id>/', FriendsListAPI.as_view(), name="friends")
 ]
+
+urlpatterns += router.urls
