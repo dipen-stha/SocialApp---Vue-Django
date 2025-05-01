@@ -25,11 +25,11 @@
                       class="p-2 border-b border-stone-200 dark:border-stone-500 color-transition bg-stone-50 hover:bg-stone-300 dark:hover:bg-zinc-800"
                       :class="chat.is_read ? 'bg-stone-50 dark:bg-zinc-500' : 'bg-stone-200 dark:bg-zinc-600'"
                     >
-                      <div class="flex gap-x-[5px] items-center">
+                      <div class="flex gap-x-[10px] items-center">
                         <img :src="getUser(chat).avatar" class="avatar" />
-                        <span>{{ chat.message }}</span>
+                        <span>{{ chat.latest_message }}</span>
                         <span class="ml-auto text-sm dark:text-stone-50 text-stone-900">{{
-                          timeAgo(chat.created_at)
+                          timeAgo(chat.modified_at)
                         }}</span>
                       </div>
                     </div>
@@ -146,6 +146,7 @@ const toggleDropdown = () => {
 const logout = () => {
   authStore.userLogout();
   showDropdown.value = false
+  router.push("/login");
 }
 
 const closeOnClickOutside = (event) => {
@@ -175,8 +176,7 @@ const getNotifications = () => {
 };
 
 const getUser = (chatObject) => {
-  if (chatObject.created_by.id === userStore.self.id) return chatObject.sent_to;
-  return chatObject.created_by;
+  return chatObject.users.find((item) => item.id !== userStore.self.id)
 };
 
 const getChats = async () => {

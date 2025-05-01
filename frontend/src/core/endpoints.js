@@ -12,7 +12,10 @@ export const userAPI = {
 }
 
 export const chatAPI = {
-    chatList: "chat/conversation-message/"
+    chatList: "chat/conversation/",
+    conversationList: "chat/conversation-message/",
+    conversationDetail: (id) => `chat/conversation-message/${id}` ,
+    sendMessage: "chat/conversation-message/"
 }
 
 export const notificationAPI = {

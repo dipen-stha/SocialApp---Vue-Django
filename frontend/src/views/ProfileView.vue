@@ -225,7 +225,7 @@ const sendRequest = async () => {
 
 const handleRequest = async (status: string) => {
   try {
-    friendStore.udpateFriendRequest(friendRequest.value.id, status);
+    friendStore.updateFriendRequest(friendRequest.value.id, status);
     if (status === "accepted") {
       relationshipState.value = "friends";
       isFriend.value = true;
@@ -240,9 +240,14 @@ const handleRequest = async (status: string) => {
 };
 
 watch(
-  () => route.params,
+  () => route.params.id,
   () => {
     determineRelationshipState();
+    userStore.fetchUserDetail(route.params.id);
+    userStore.fetchUserStats(route.params.id);
+    postStore.fetchPostList(route.params.id);
+    friendStore.fetchFriends(self.value.id);
+    friendStore.fetchFriendRequest();
   }
 );
 
@@ -256,8 +261,8 @@ watch(
 )
 
 onBeforeRouteLeave(() => {
-  userStore.$reset();
-  postStore.$reset();
-  friendStore.$reset();
+  userStore.reset();
+  postStore.reset();
+  friendStore.reset();
 })
 </script>

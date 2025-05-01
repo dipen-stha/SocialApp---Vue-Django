@@ -2,7 +2,7 @@
 import BaseModal from '@/components/BaseModal.vue';
 import { ref } from 'vue'
 
-const modalActive = ref(null);
+const modalActive = ref(false);
 
 const toggleModal = () => {
     modalActive.value = !modalActive.value;
@@ -10,6 +10,6 @@ const toggleModal = () => {
 </script>
 
 <template>
-    <BaseModal :modalActive="modalActive">
-    </BaseModal>
+    <!-- <BaseModal :modalActive="modalActive">
+    </BaseModal> -->
 </template>

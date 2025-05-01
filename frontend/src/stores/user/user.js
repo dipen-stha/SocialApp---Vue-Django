@@ -79,6 +79,13 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
+  const reset = () => {
+    user.value = null;
+    userRecommendations.value = [];
+    userStats.friends_count = null;
+    userStats.posts_count = null;
+  }
+
   return {
     isAuthenticated,
     user,
@@ -88,6 +95,7 @@ export const useUserStore = defineStore("user", () => {
     fetchUserDetail,
     fetchUserRecommendations,
     fetchSelfDetail,
-    fetchUserStats
+    fetchUserStats,
+    reset
   };
 });

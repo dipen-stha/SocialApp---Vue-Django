@@ -7,11 +7,10 @@ from .models import Conversation, ConversationMessage
 
 class ConversationSerializer(serializers.ModelSerializer):
     users = UserSerializer(fields=['id', 'name', 'avatar'], many=True, read_only=True)
-    formatted_modified_at = serializers.CharField()
-
+    latest_message = serializers.CharField(read_only=True)
     class Meta:
         model = Conversation
-        fields = ['id', 'users', 'formatted_modified_at']
+        fields = ['id', 'users', 'modified_at', 'latest_message']
 
 # class ConversationSerializer(serializers.ModelSerializer):
 #     sent_by = UserSerializer(fields=['id', 'name', 'avatar'], read_only=True)

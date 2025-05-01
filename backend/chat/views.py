@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.db.models import Prefetch, Q, F, Max
+from django.db.models import Prefetch, Q, F, Max, OuterRef, Subquery
 from drf_spectacular.utils import extend_schema
 
 from rest_framework.viewsets import ModelViewSet
@@ -25,10 +25,15 @@ class ConversationViewSet(ModelViewSet):
 
 class ConversationListCreateAPI(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = ConversationDetailSerializer
+    serializer_class = ConversationSerializer
 
     def get_queryset(self):
-        return Conversation.objects.filter(users__in=[self.request.user.id,])
+        conversation_subquery = ConversationMessage.objects.filter(
+            conversation=OuterRef('pk')
+        ).order_by('-created_at')
+        return Conversation.objects.filter(users__in=[self.request.user.id]).annotate(
+            latest_message=Subquery(conversation_subquery.values('message'))
+        )
 
 
 class ConversationRetrieveUpdateDestroyAPI(RetrieveUpdateDestroyAPIView):

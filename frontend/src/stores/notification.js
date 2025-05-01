@@ -24,10 +24,16 @@ export const useNotificationStore = defineStore("notification" ,() => {
 
         }
     }
+
+    const reset = async() => {
+        notificationList.value = [];
+        notificationStats.value = null;
+    }
     return {
         notificationList,
         notificationStats,
         fetchNotificationList,
-        fetchNotificationStats
+        fetchNotificationStats,
+        reset
     }
 })

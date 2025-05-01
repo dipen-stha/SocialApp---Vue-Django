@@ -49,7 +49,6 @@ export const useAuthStore = defineStore("auth", () => {
 
   const userLogout = () => {
     jwtServices.destroyToken();
-    router.push({ name: "login" });
   };
 
   const refreshToken = async (refresh) => {

@@ -39,7 +39,7 @@ export const useFriendStore = defineStore("friend", () => {
         }
     }
 
-    const udpateFriendRequest = async (id, status) => {
+    const updateFriendRequest = async (id, status) => {
         try {
             const response = await apiClient.put(friendsAPI.updateRequest(id), {
                 status: status
@@ -49,12 +49,18 @@ export const useFriendStore = defineStore("friend", () => {
         }
     }
 
+    const reset = () => {
+        friendsRequestsList.value = []
+        friendsList.value = []
+    }
+
     return {
         friendsList,
         friendsRequestsList,
         fetchFriends,
         fetchFriendRequest,
         sendFriendRequest,
-        udpateFriendRequest
+        updateFriendRequest,
+        reset
     }
 })

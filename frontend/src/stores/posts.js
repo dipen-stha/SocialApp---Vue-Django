@@ -94,6 +94,15 @@ export const usePostStore = defineStore("post", () => {
         }
     }
 
+    const reset = () => {
+        postList.value = [];
+        postDetail.value = null;
+        postPayload.body = null
+        postPayload.attachments = [];
+        searchData.users = [];
+        searchData.posts = [];
+    }
+
     return {
         postList,
         postDetail,
@@ -105,6 +114,7 @@ export const usePostStore = defineStore("post", () => {
         updatePost,
         createComment,
         createLikes,
-        searchPosts
+        searchPosts,
+        reset
     }
 })
