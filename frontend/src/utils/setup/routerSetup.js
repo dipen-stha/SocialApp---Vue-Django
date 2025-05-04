@@ -23,7 +23,7 @@ const initRouter = (app) => {
                     next({ name: 'login'});
                 }
             } else {
-                next({ name: 'login'});
+                next();
             }
         }
     });

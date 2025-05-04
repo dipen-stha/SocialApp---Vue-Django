@@ -1,10 +1,12 @@
 <template>
-  <div class="fixed inset-0 primary-background -z-10"></div>
+  <div class="fixed inset-0 -z-10"></div>
   <div class="relative primary-text">
     <RouterView />
   </div>
 </template>
 
 <script setup>
-import { RouterView } from "vue-router";
+import { RouterView, useRoute } from "vue-router";
+
+const route = useRoute();
 </script>
