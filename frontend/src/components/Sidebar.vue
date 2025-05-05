@@ -45,7 +45,6 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
 import Icon from './Icon.vue'
 import { SideBarItems } from '@/utils/setup/sideBarItems'
 
