@@ -185,7 +185,7 @@ const getChats = async () => {
 
 const notification = ref(null);
 let socket = null;
-let socketUrl = "ws://localhost:8000/ws/notify/";
+let socketUrl = "ws://localhost:8080/ws/notify/";
 
 const connectSocket = async () => {
   socket = new WebSocket(socketUrl);

@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Prefetch, Q, Case, When
@@ -36,7 +37,6 @@ class SignupView(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
-
         response.data['tokens'] = self.tokens
         return response
 

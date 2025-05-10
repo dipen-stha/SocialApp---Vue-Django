@@ -108,7 +108,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR, 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -159,9 +159,23 @@ DATABASES = {
     }
 }
 
-CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_RESULT_EXTENDED = True
+
+# EMAIL_BACKEND = env('EMAIL_BACKEND')
+# EMAIL_HOST = env('EMAIL_HOST')
+# # EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+# EMAIL_PORT = env('EMAIL_PORT')
+# EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+# DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
+
+# Looking to send emails in production? Check out our Email API/SMTP product!
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = '682ffc2bffa563'
+EMAIL_HOST_PASSWORD = '7c30515393d181'
+EMAIL_PORT = '2525'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

@@ -35,7 +35,7 @@ export const useUserStore = defineStore("user", () => {
         self.avatar = response.data.avatar;
       }
     } catch (error) {
-      isAuthenticated = false;
+      isAuthenticated.value = false;
       throw error;
     }
   };
@@ -51,7 +51,7 @@ export const useUserStore = defineStore("user", () => {
         user.avatar = response.data.avatar;
       }
     } catch (error) {
-      isAuthenticated = false;
+      isAuthenticated.value = false;
       throw error;
     }
   };

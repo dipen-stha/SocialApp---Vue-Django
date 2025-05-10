@@ -17,6 +17,7 @@ const router = createRouter({
       path: "/",
       name: "authLayout",
       component: () => import("@/Layout/AuthLayout.vue"),
+      meta: { requiresAuth: true },
       children: [
         {
           path: "/feed",

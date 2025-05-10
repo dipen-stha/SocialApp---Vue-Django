@@ -93,7 +93,7 @@ const fetchConvo = async (chatId, chatUser) => {
 }
 
 const connectChatSocket = async () => {
-    const socketUrl = 'ws://localhost:8000/ws/chat/'
+    const socketUrl = 'ws://localhost:8080/ws/chat/'
     socket = new WebSocket(socketUrl);
 
     socket.onopen = () => {

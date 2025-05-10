@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 
 from account.models import CustomerUser
+from account.tasks import send_verification_email
 from commons.serializers import DynamicFieldsModelSerializer
 
 User = get_user_model()
@@ -42,6 +43,8 @@ class UserSignUpSerializer(ModelSerializer):
             customer_user = CustomerUser.objects.create(
                 user=user,
             )
+
+        send_verification_email.delay(user.id, user.email)
         return user
 
 

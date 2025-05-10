@@ -1,7 +1,7 @@
 <template>
-    <div class="bg-gray-200 h-screen">
+    <div class="primary-background h-screen">
       <div class="h-screen flex justify-center items-center">
-        <div class="min-h-[500px] min-w-[400px] bg-white rounded-md shadow-lg">
+        <div class="min-h-[500px] min-w-[400px] primary-background rounded-md shadow-lg">
           <div class="text-center mt-[30px]">
             <span class="text-xl font-semibold">Login</span>
           </div>
@@ -9,12 +9,12 @@
             <div class="flex h-full justify-center items-center">
               <div class="flex flex-col gap-y-[15px] w-[90%]">
                 <div
-                  class="flex flex-col gap-y-[10px] border border-gray-100 p-4 rounded-md"
+                  class="flex flex-col gap-y-[10px] border primary-border p-4 rounded-md"
                 >
                   <div class="flex flex-col justify-center">
                     <input
                       type="text"
-                      class="input-field w-full"
+                      class="input-field w-full text-stone-900"
                       placeholder="Enter Email"
                       v-model="signUpPayload.email"
                     />
@@ -25,7 +25,7 @@
                   <div class="flex flex-col justify-center">
                     <input
                       type="text"
-                      class="input-field w-full"
+                      class="input-field w-full text-stone-900"
                       placeholder="Enter Name"
                       v-model="signUpPayload.name"
                     />
@@ -36,7 +36,7 @@
                   <div class="flex flex-col justify-center">
                     <input
                       type="password"
-                      class="input-field w-full"
+                      class="input-field w-full text-stone-900"
                       placeholder="Enter Password"
                       v-model="signUpPayload.password"
                     />
@@ -47,7 +47,7 @@
                   <div class="flex flex-col justify-center">
                     <input
                       type="password"
-                      class="input-field w-full"
+                      class="input-field w-full text-stone-900"
                       placeholder="Repeat Password"
                       v-model="signUpPayload.repeat_password"
                     />
