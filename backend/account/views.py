@@ -62,7 +62,7 @@ class UserViewSet(ModelViewSet):
             is_friend=Case(
                 When(
                     id__in=self.request.user.friends.values_list('id'),
-                then=True),default=False)
+                then=True), default=False)
         )
 
 

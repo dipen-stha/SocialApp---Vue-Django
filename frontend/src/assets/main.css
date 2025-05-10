@@ -30,6 +30,15 @@
   .primary-text{
     @apply text-stone-900 dark:text-stone-50
   }
+  .admin-background{
+    @apply bg-gray-200
+  }
+  .admin-border{
+    @apply border border-gray-300
+  }
+  .admin-text {
+    @apply text-gray-800 font-sans
+  }
 }
 
 .custom-scroll::-webkit-scrollbar {

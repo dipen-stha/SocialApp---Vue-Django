@@ -6,12 +6,12 @@ const router = createRouter({
     {
       path: "/signup",
       name: "signup",
-      component: () => import("@/views/SignupView.vue"),
+      component: () => import("@/views/Customer/SignupView.vue"),
     },
     {
       path: "/login",
       name: "login",
-      component: () => import("@/views/LoginView.vue"),
+      component: () => import("@/views/Customer/LoginView.vue"),
     },
     {
       path: "/",
@@ -21,46 +21,68 @@ const router = createRouter({
         {
           path: "/feed",
           name: "feed",
-          component: () => import("@/views/FeedView.vue"),
+          component: () => import("@/views/Customer/FeedView.vue"),
           meta: { requiresAuth: true },
         },
         {
           path: "/search",
           name: "search",
-          component: () => import("@/views/SearchView.vue"),
+          component: () => import("@/views/Customer/SearchView.vue"),
           meta: { requiresAuth: true },
         },
         {
           path: "/profile/:id",
           name: "profile",
-          component: () => import("@/views/ProfileView.vue"),
+          component: () => import("@/views/Customer/ProfileView.vue"),
           meta: { requiresAuth: true },
         },
         {
           path: "/profile/:id/friends",
           name: "friends",
-          component: () => import("@/views/FriendsView.vue"),
+          component: () => import("@/views/Customer/FriendsView.vue"),
           meta: { requiresAuth: true },
         },
         {
           path: "/:id/",
           name: "postdetail",
-          component: () => import("@/views/PostDetailView.vue"),
+          component: () => import("@/views/Customer/PostDetailView.vue"),
           meta: { requiresAuth: true },
         },
         {
           path: "/chat",
           name: "chat",
-          component: () => import("@/views/ChatView.vue"),
+          component: () => import("@/views/Customer/ChatView.vue"),
           meta: { requiresAuth: true },
         },
         {
           path: "/about",
           name: "about",
-          component: () => import("../views/AboutView.vue"),
+          component: () => import("../views/Customer/AboutView.vue"),
           meta: { requiresAuth: true },
         },
       ],
+    },
+    {
+      path: '/admin',
+      name: 'adminAuthLayout',
+      component: () => import("../Layout/AdminAuthLayout.vue"),
+      meta: { requiresAuth: false },
+      children: [
+        {
+          path: "/dashboard",
+          name: "dashboard",
+          component: () => import("../views/Dashboard/Index.vue"),
+          meta: {requiresAuth: false}
+        },
+        {
+          path: "/user",
+          name: "user",
+          component: () => import("../views/Dashboard/Users/User.vue"),
+          meta: {
+            requiresAuth: false
+          }
+        }
+      ]
     },
   ],
 });
