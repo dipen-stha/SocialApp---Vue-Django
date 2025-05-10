@@ -1,0 +1,78 @@
+name: backend
+
+services:
+  postgres:
+    image: postgres:17
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+
+  app:
+    build: .
+    image: socialapp-image
+    container_name: socialapp-container
+    command: /app/entrypoint.sh
+    volumes:
+      - ./static:/app/static
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+#      - redis
+  proxy:
+    image: nginx:latest
+    container_name: nginx-container
+    ports:
+      - "8001:80"
+    volumes:
+      - ./socialapp.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./static:/static:ro
+    depends_on:
+      - app
+
+volumes:
+  postgres_db:
+#  redis:
+#    image: "redis:alpine"
+#    container_name: redis-container
+#    restart: unless-stopped
+#    ports:
+#      - "6379:6379"
+#    volumes:
+#      - redis_data:/data
+
+#  celery:
+#    image: socialapp-image
+#    container_name: celery-container
+#    command: celery -A a_core worker -E -l info
+#    volumes:
+#      - .:/app
+#    depends_on:
+#      - postgres
+#      - redis
+#      - app
+#
+#  flower:
+#    image: socialapp-image
+#    container_name: flower-container
+#    command: celery -A a_core flower -basic_auth=admin:admin
+#    ports:
+#      - "5555:5555"
+#    depends_on:
+#      - redis
+#
+#  beat:
+#    image: socialapp-image
+#    container_name: beat-container
+#    command: celery -A a_core beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+#    volumes:
+#      - .:/app
+#    depends_on:
+#      - redis
+#      - app
+
+#  redis_data:
