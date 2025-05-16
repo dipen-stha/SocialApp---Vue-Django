@@ -3,7 +3,7 @@ import router from '@/router';
 import jwtServices from '@/services/jwt';
 import { authAPI } from '@/core/endpoints';
 
-const apiUrl = 'http://localhost:8000/api/'
+const apiUrl = 'http://app.localhost/api/'
 
 const apiClient = axios.create({
   baseURL: apiUrl,

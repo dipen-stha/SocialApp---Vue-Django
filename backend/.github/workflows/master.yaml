@@ -1,0 +1,37 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: master
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY}}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run:
+          mkdir -p ~/.ssh/
+          echo "SSH_PRIVATE_KEY" > ~/.ssh/github
+          chmod 600 ~/.ssh/github/
+          chmod 600 ~/.ssh/config <<END
+          Host target
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentifyFiles ~/.ssh/github
+            LogLevel ERROR
+            StrickHostKeyChecking no
+          END
+      - name: Run deply
+        run: |
+            ssh target "cd backend/ && docker compose down && git pull && docker compose up --build -d --force-recreate"
+

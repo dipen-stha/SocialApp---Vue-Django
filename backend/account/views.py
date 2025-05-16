@@ -16,6 +16,7 @@ from rest_framework.exceptions import ValidationError
 
 from django_filters import rest_framework as filters
 
+from .models import Email
 from .serializers import UserSerializer, UserSignUpSerializer, UserStatsSerializer
 
 User = get_user_model()
@@ -39,6 +40,27 @@ class SignupView(CreateAPIView):
         response = super().create(request, *args, **kwargs)
         response.data['tokens'] = self.tokens
         return response
+
+
+class VerifyEmailView(APIView):
+    def post(self, request, token: str, *args, **kwargs):
+        try:
+            print(token, "Token")
+            email_obj = Email.objects.get(verification_token=token)
+            if email_obj.is_expired:
+                return Response({"detail": "Verification link has expired"}, status=status.HTTP_400_BAD_REQUEST)
+
+            email_obj.is_verified = True
+            email_obj.verification_token = None
+            email_obj.token_created_at = None
+            email_obj.save()
+
+            return Response({"detail": "Email successfully verified"}, status=status.HTTP_200_OK)
+        except Email.DoesNotExist:
+            return Response({"detail": "Email Not Found"})
+        except Exception as e:
+            return Response({"detail": "There was an error while verifying your email. Please try again later."})
+
 
 class SelfUserAPIView(RetrieveAPIView):
     queryset = User.objects.all()

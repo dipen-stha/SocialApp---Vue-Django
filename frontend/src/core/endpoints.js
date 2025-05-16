@@ -2,7 +2,8 @@ export const authAPI = {
     login: "account/authenticate/login/",
     signup: "account/authenticate/signup/",
     refresh: "account/authenticate/refresh/",
-    self: "account/authenticate/self/user/"
+    self: "account/authenticate/self/user/",
+    verify: (token) => `account/authenticate/verify/${token}/`
 }
 
 export const userAPI = {

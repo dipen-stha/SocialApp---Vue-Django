@@ -1,36 +1,42 @@
 import logging
-import time
+from decouple import config
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 
 from celery import shared_task
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
+from account.models import Email
+
 logger = logging.getLogger(__name__)
 User = get_user_model()
 @shared_task(bind=True)
-def send_verification_email(self, user_id, user_email):
+def send_verification_email(self, user_id: int, user_email: str):
     try:
 
         receiver_email = user_email
+        email = Email.objects.get(email=user_email)
         template_name = 'verification.html'
-        convert_to_html_content = render_to_string(
+        html_content = render_to_string(
             template_name=template_name,
-            context={'user': user_id}
+            context={
+                'user': user_id,
+                'frontend_url': config('FRONTEND_URL'),
+                'token': email.verification_token
+            }
         )
-        plain_message = strip_tags(convert_to_html_content)
-        print('')
-        send_mail(
-            subject="Verification Email",
-            message=plain_message,
-            from_email = 'app.social@email.com',
-            recipient_list=[receiver_email,],
-            fail_silently=False,
+        msg = EmailMultiAlternatives(
+            subject="Verify Your Email",
+            body="Please verify your email",
+            from_email="noreply@socialapp.com",
+            to=[receiver_email],
         )
-        print('email sent')
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
     except Exception as e:
         print(e)
         raise e

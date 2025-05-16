@@ -34,8 +34,6 @@ services:
     depends_on:
       - app
 
-volumes:
-  postgres_db:
 #  redis:
 #    image: "redis:alpine"
 #    container_name: redis-container
@@ -44,7 +42,7 @@ volumes:
 #      - "6379:6379"
 #    volumes:
 #      - redis_data:/data
-
+#
 #  celery:
 #    image: socialapp-image
 #    container_name: celery-container
@@ -55,7 +53,7 @@ volumes:
 #      - postgres
 #      - redis
 #      - app
-#
+
 #  flower:
 #    image: socialapp-image
 #    container_name: flower-container
@@ -75,4 +73,6 @@ volumes:
 #      - redis
 #      - app
 
-#  redis_data:
+volumes:
+  postgres_db:
+  redis_data:

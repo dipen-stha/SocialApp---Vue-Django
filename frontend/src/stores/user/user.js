@@ -10,13 +10,15 @@ export const useUserStore = defineStore("user", () => {
     id: null,
     name: null,
     email: null,
-    avatar: null
+    avatar: null,
+    is_verified: false,
   });
   const self = reactive({
     id: null,
     name: null,
     email: null,
-    avatar: null
+    avatar: null,
+    is_verified: false
   });
   const userRecommendations = ref([])
   const userStats = ref({
@@ -33,6 +35,7 @@ export const useUserStore = defineStore("user", () => {
         self.name = response.data.name;
         self.email = response.data.email;
         self.avatar = response.data.avatar;
+        self.is_verified = response.data.is_verified
       }
     } catch (error) {
       isAuthenticated.value = false;
@@ -49,6 +52,7 @@ export const useUserStore = defineStore("user", () => {
         user.name = response.data.name;
         user.email = response.data.email;
         user.avatar = response.data.avatar;
+        self.is_verified = response.data.is_verified
       }
     } catch (error) {
       isAuthenticated.value = false;

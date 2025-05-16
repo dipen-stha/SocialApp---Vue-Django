@@ -14,6 +14,18 @@ const router = createRouter({
       component: () => import("@/views/Customer/LoginView.vue"),
     },
     {
+      path: '/verify',
+      name: 'verify',
+      component: () => import('@/views/Customer/Verify.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/unverified',
+      name: "unverified",
+      component: () => import("@/views/Customer/Unverified.vue"),
+      meta: { requiresAuth: true }
+    },
+    {
       path: "/",
       name: "authLayout",
       component: () => import("@/Layout/AuthLayout.vue"),

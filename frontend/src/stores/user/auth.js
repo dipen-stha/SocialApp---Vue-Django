@@ -41,9 +41,18 @@ export const useAuthStore = defineStore("auth", () => {
       jwtServices.setToken(response.data.tokens.access);
       jwtServices.setRefreshToken(response.data.tokens.refresh);
       signUpErrors.value = null;
-      router.push({ name: "feed" });
+      router.push({ name: "unverified" });
     } catch (error){
       signUpErrors.value = error.response.data;
+    }
+  }
+
+  const userVerify = async (token) => {
+    try {
+      const response = await apiClient.post(authAPI.verify(token))
+      router.push({ name: 'feed' })
+    } catch(error) {
+      toast.error(error.response.data);
     }
   }
 
@@ -72,6 +81,7 @@ export const useAuthStore = defineStore("auth", () => {
     userSignUp,
     userLogout,
     refreshToken,
+    userVerify,
   };
 });
 
